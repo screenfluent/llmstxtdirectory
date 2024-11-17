@@ -21,22 +21,19 @@ mkdir -p public/logos
 chown -R llmstxtdirectory:www-data public/logos
 chmod -R 775 public/logos
 
-# Create and initialize database if it doesn't exist
+# Ensure db directory exists and is accessible
 mkdir -p db
 chmod 755 db
 
-if [ ! -f "db/votes.db" ] || [ ! -s "db/votes.db" ]; then
-    echo "Initializing database..."
-    rm -f db/votes.db
-    touch db/votes.db
-    chown llmstxtdirectory:www-data db/votes.db
-    chmod 664 db/votes.db
-    php db/init.php
-else
-    echo "Database exists, checking schema..."
-    # Apply schema updates without sudo
-    php db/init.php
-fi
+# Remove existing database to force recreation with new schema
+rm -f db/votes.db
+touch db/votes.db
+chown llmstxtdirectory:www-data db/votes.db
+chmod 664 db/votes.db
+
+# Initialize database with new schema
+echo "Initializing database with new schema..."
+php db/init.php
 
 # Set database permissions
 chown llmstxtdirectory:www-data db/votes.db
