@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'llms_txt_url' => $_POST['llms_txt_url'],
                     'has_full' => isset($_POST['has_full']) ? 1 : 0,
                     'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
+                    'is_draft' => isset($_POST['is_draft']) ? 1 : 0,
                     'is_requested' => isset($_POST['is_requested']) ? 1 : 0
                 ];
                 
@@ -151,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'llms_txt_url' => $_POST['llms_txt_url'],
                     'has_full' => isset($_POST['has_full']) ? 1 : 0,
                     'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
+                    'is_draft' => isset($_POST['is_draft']) ? 1 : 0,
                     'is_requested' => isset($_POST['is_requested']) ? 1 : 0
                 ];
                 
@@ -426,6 +428,7 @@ $implementations = $db->getImplementations();
                         <th class="url">llms.txt URL</th>
                         <th class="status">Has Full</th>
                         <th class="status">Is Featured</th>
+                        <th class="status">Is Draft</th>
                         <th class="status">Type</th>
                         <th class="votes">Votes</th>
                         <th class="actions">Actions</th>
@@ -440,6 +443,7 @@ $implementations = $db->getImplementations();
                         <td class="url"><?= htmlspecialchars($impl['llms_txt_url']) ?></td>
                         <td class="status"><?= $impl['has_full'] ? 'Yes' : 'No' ?></td>
                         <td class="status"><?= $impl['is_featured'] ? 'Yes' : 'No' ?></td>
+                        <td class="status"><?= $impl['is_draft'] ? 'Yes' : 'No' ?></td>
                         <td class="status"><?= $impl['is_requested'] ? 'Requested' : 'Regular' ?></td>
                         <td class="votes"><?= htmlspecialchars($impl['votes']) ?></td>
                         <td class="actions">
@@ -503,6 +507,13 @@ $implementations = $db->getImplementations();
 
                 <div class="form-group">
                     <label class="checkbox-label">
+                        <input type="checkbox" id="is_draft" name="is_draft" value="1">
+                        Draft
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
                         <input type="checkbox" id="is_requested" name="is_requested" value="1">
                         Is Requested Implementation
                     </label>
@@ -527,6 +538,7 @@ $implementations = $db->getImplementations();
             document.getElementById('llms_txt_url').value = '';
             document.getElementById('has_full').checked = false;
             document.getElementById('is_featured').checked = false;
+            document.getElementById('is_draft').checked = false;
             document.getElementById('is_requested').checked = false;
             document.querySelector('.logo-preview').style.display = 'none';
             document.getElementById('modal').style.display = 'flex';
@@ -541,6 +553,7 @@ $implementations = $db->getImplementations();
             document.getElementById('llms_txt_url').value = impl.llms_txt_url || '';
             document.getElementById('has_full').checked = impl.has_full === 1;
             document.getElementById('is_featured').checked = impl.is_featured === 1;
+            document.getElementById('is_draft').checked = impl.is_draft === 1;
             document.getElementById('is_requested').checked = impl.is_requested === 1;
             
             // Show current logo

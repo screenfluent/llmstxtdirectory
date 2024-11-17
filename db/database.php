@@ -17,48 +17,30 @@ class Database {
         }
     }
 
-    public function getImplementations($includeRequested = true) {
+    public function getImplementations() {
         try {
-            $query = "SELECT * FROM implementations";
-            if (!$includeRequested) {
-                $query .= " WHERE is_requested = 0";
-            }
-            $query .= " ORDER BY CASE WHEN is_requested = 1 THEN votes END DESC, name ASC";
-            
-            $result = $this->db->query($query);
-            if ($result === false) {
-                error_log("Database error: Failed to fetch implementations");
-                return [];
-            }
-            
-            $implementations = [];
-            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-                $implementations[] = $row;
-            }
-            
-            return $implementations;
+            $stmt = $this->db->prepare('
+                SELECT * FROM implementations 
+                WHERE is_draft = 0 
+                ORDER BY is_featured DESC, name ASC
+            ');
+            $result = $stmt->execute();
+            return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            error_log("Database error: Failed to fetch implementations");
             return [];
         }
     }
 
     public function getRequestedImplementations() {
         try {
-            $query = "SELECT * FROM implementations WHERE is_requested = 1 ORDER BY votes DESC";
-            $result = $this->db->query($query);
-            
-            if ($result === false) {
-                error_log("Database error: Failed to fetch requested implementations");
-                return [];
-            }
-            
-            $implementations = [];
-            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-                $implementations[] = $row;
-            }
-            
-            return $implementations;
+            $stmt = $this->db->prepare('
+                SELECT * FROM implementations 
+                WHERE is_requested = 1 AND is_draft = 0 
+                ORDER BY name ASC
+            ');
+            $result = $stmt->execute();
+            return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
         } catch (Exception $e) {
             error_log("Database error: " . $e->getMessage());
             return [];
@@ -67,17 +49,12 @@ class Database {
 
     public function addImplementation($data) {
         try {
-            // Generate logo path from name
-            if (!empty($data['logo_url'])) {
-                $ext = pathinfo($data['logo_url'], PATHINFO_EXTENSION);
-                $filename = get_logo_filename($data['name']);
-                $data['logo_url'] = '/logos/' . $filename . '.' . $ext;
-            }
-            
             $stmt = $this->db->prepare('INSERT INTO implementations (
-                name, logo_url, description, llms_txt_url, has_full, is_featured, is_requested, votes
+                name, logo_url, description, llms_txt_url, has_full, 
+                is_featured, is_requested, votes, is_draft
             ) VALUES (
-                :name, :logo_url, :description, :llms_txt_url, :has_full, :is_featured, :is_requested, :votes
+                :name, :logo_url, :description, :llms_txt_url, :has_full,
+                :is_featured, :is_requested, :votes, :is_draft
             )');
             
             $stmt->bindValue(':name', $data['name'], SQLITE3_TEXT);
@@ -88,6 +65,7 @@ class Database {
             $stmt->bindValue(':is_featured', $data['is_featured'] ?? 0, SQLITE3_INTEGER);
             $stmt->bindValue(':is_requested', $data['is_requested'], SQLITE3_INTEGER);
             $stmt->bindValue(':votes', $data['votes'] ?? 0, SQLITE3_INTEGER);
+            $stmt->bindValue(':is_draft', $data['is_draft'] ?? 1, SQLITE3_INTEGER);
             
             return $stmt->execute();
         } catch (Exception $e) {
@@ -98,17 +76,9 @@ class Database {
 
     public function updateImplementation($id, $data) {
         try {
-            // Generate logo path from name if logo is being updated
-            if (!empty($data['logo_url'])) {
-                $ext = pathinfo($data['logo_url'], PATHINFO_EXTENSION);
-                $filename = get_logo_filename($data['name']);
-                $data['logo_url'] = '/logos/' . $filename . '.' . $ext;
-            }
-            
             $fields = [];
             $values = [];
             
-            // Build update fields dynamically
             foreach ($data as $key => $value) {
                 if ($key !== 'id') {
                     $fields[] = "$key = :$key";
@@ -218,7 +188,7 @@ class Database {
 
     public function getRecentlyAddedImplementations($limit = 6) {
         try {
-            $query = "SELECT * FROM implementations WHERE is_requested = 0 ORDER BY id DESC LIMIT :limit";
+            $query = "SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit";
             $stmt = $this->db->prepare($query);
             $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
             $result = $stmt->execute();
@@ -260,20 +230,30 @@ class Database {
 
     public function getFeaturedImplementations() {
         try {
-            $query = "SELECT * FROM implementations WHERE is_featured = 1 AND is_requested = 0 ORDER BY id ASC";
-            $result = $this->db->query($query);
-            
-            if ($result === false) {
-                error_log("Database error: Failed to fetch featured implementations");
-                return [];
-            }
-            
-            $implementations = [];
-            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-                $implementations[] = $row;
-            }
-            
-            return $implementations;
+            $stmt = $this->db->prepare('
+                SELECT * FROM implementations 
+                WHERE is_featured = 1 AND is_draft = 0 
+                ORDER BY name ASC
+            ');
+            $result = $stmt->execute();
+            return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
+        } catch (Exception $e) {
+            error_log("Database error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getRecentImplementations($limit = 5) {
+        try {
+            $stmt = $this->db->prepare('
+                SELECT * FROM implementations 
+                WHERE is_draft = 0 
+                ORDER BY created_at DESC 
+                LIMIT :limit
+            ');
+            $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
+            $result = $stmt->execute();
+            return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
         } catch (Exception $e) {
             error_log("Database error: " . $e->getMessage());
             return [];

@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS implementations (
     has_full BOOLEAN DEFAULT 0,
     is_requested BOOLEAN DEFAULT 0,
     is_featured BOOLEAN DEFAULT 0,
-    votes INTEGER DEFAULT 0
+    votes INTEGER DEFAULT 0,
+    is_draft INTEGER DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS votes (
