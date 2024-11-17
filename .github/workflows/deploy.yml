@@ -20,14 +20,3 @@ jobs:
         
       - name: Check PHP syntax
         run: find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
-        
-  notify:
-    needs: lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify about deployment
-        if: success()
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-          SLACK_MESSAGE: 'Deployment triggered for ${{ github.ref_name }} branch'
