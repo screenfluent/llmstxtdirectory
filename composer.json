@@ -1,0 +1,19 @@
+{
+    "name": "screenfluent/llmstxtdirectory",
+    "description": "Directory of AI-friendly documentation using the llms.txt standard",
+    "type": "project",
+    "require": {
+        "php": "^8.1",
+        "ext-sqlite3": "*"
+    },
+    "autoload": {
+        "files": [
+            "includes/helpers.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}
