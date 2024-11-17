@@ -8,8 +8,8 @@ git config --global --add safe.directory /home/llmstxtdirectory/llmstxt.director
 
 # Update repository
 cd /home/llmstxtdirectory/llmstxt.directory
-git fetch origin $FORGE_SITE_BRANCH
-git reset --hard origin/$FORGE_SITE_BRANCH
+git fetch origin production
+git reset --hard origin/production
 
 # Set permissions
 chown -R llmstxtdirectory:llmstxtdirectory .
@@ -18,7 +18,7 @@ find . -type d -exec chmod 755 {} \;
 
 # Create and set permissions for storage directories
 mkdir -p public/logos
-chown -R llmstxtdirectory:llmstxtdirectory public/logos
+chown -R llmstxtdirectory:www-data public/logos
 chmod -R 775 public/logos
 
 # Create and initialize database if it doesn't exist
@@ -26,13 +26,13 @@ if [ ! -f "db/votes.db" ] || [ ! -s "db/votes.db" ]; then
     echo "Initializing database..."
     rm -f db/votes.db
     touch db/votes.db
-    chown llmstxtdirectory:llmstxtdirectory db/votes.db
+    chown llmstxtdirectory:www-data db/votes.db
     chmod 664 db/votes.db
-    php db/init.php
+    sudo -u llmstxtdirectory php db/init.php
 else
     echo "Database exists, checking schema..."
     # Apply schema updates
-    php -r "
+    sudo -u llmstxtdirectory php -r "
         require_once 'db/database.php';
         \$db = new Database();
         \$schema = file_get_contents('db/schema.sql');
@@ -41,8 +41,11 @@ else
 fi
 
 # Set database permissions
-chown llmstxtdirectory:llmstxtdirectory db/votes.db
+chown llmstxtdirectory:www-data db/votes.db
 chmod 664 db/votes.db
+
+# Ensure db directory is accessible
+chmod 755 db
 
 # Restart PHP
 ( flock -w 10 9 || exit 1
