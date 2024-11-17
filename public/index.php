@@ -754,7 +754,7 @@
         </div>
         <div class="footer">
             <p>Created by <a href="https://x.com/screenfluent" target="_blank">Szymon Rączka</a> • <a href="https://github.com/screenfluent/llmstxtdirectory" target="_blank">GitHub</a></p>
-            <p class="version">Version 0.5.0 • Last updated: <?php echo date('F j, Y'); ?> • TEST STAGING DEPLOY</p>
+            <p class="version">Version 0.5.0 • Last updated: <?php echo date('F j, Y'); ?></p>
         </div>
     </footer>
 </body>
