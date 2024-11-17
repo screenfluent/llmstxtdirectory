@@ -1,23 +1,50 @@
-cd /home/stagingllmstxtdirectory/staging.llmstxt.directory
+#!/bin/bash
+
+# Enable error reporting
 set -e
-echo "🚀 Starting staging deployment..."
-chown -R stagingllmstxtdirectory:stagingllmstxtdirectory .
-chmod -R 775 .
-git config --global --add safe.directory /home/stagingllmstxtdirectory/staging.llmstxt.directory
-git fetch origin $FORGE_SITE_BRANCH
-git reset --hard origin/$FORGE_SITE_BRANCH
-$FORGE_COMPOSER install --no-interaction --prefer-dist --optimize-autoloader
-mkdir -p storage/logs
+
+# Configure git
+git config --global --add safe.directory /home/forge/staging.llmstxt.directory
+
+# Update repository
+cd /home/forge/staging.llmstxt.directory
+git fetch origin staging
+git reset --hard origin/staging
+
+# Set permissions
+chown -R forge:forge .
+find . -type f -exec chmod 644 {} \;
+find . -type d -exec chmod 755 {} \;
+
+# Create and set permissions for storage directories
 mkdir -p public/logos
-chmod -R 775 storage
+chown -R forge:www-data public/logos
 chmod -R 775 public/logos
-chmod -R 775 db
-chmod 775 .
-if [ ! -f "db/votes.db" ]; then
-    php db/init.php
+
+# Create and initialize database if it doesn't exist
+if [ ! -f "db/votes.db" ] || [ ! -s "db/votes.db" ]; then
+    echo "Initializing database..."
+    rm -f db/votes.db
+    touch db/votes.db
+    chown forge:www-data db/votes.db
     chmod 664 db/votes.db
+    sudo -u forge php db/init.php
+else
+    echo "Database exists, checking schema..."
+    # Apply schema updates
+    sudo -u forge php -r "
+        require_once 'db/database.php';
+        \$db = new Database();
+        \$schema = file_get_contents('db/schema.sql');
+        \$db->db->exec(\$schema);
+    "
 fi
-echo "🔄 Restarting PHP..."
-( flock -w 10 9 || exit 1
-    echo 'Restarting FPM...'; sudo -S service $FORGE_PHP_FPM reload ) 9>/tmp/fpmlock
-echo "✅ Deployment complete!"
+
+# Set database permissions
+chown forge:www-data db/votes.db
+chmod 664 db/votes.db
+
+# Restart PHP
+sudo -S service php8.2-fpm restart
+
+echo "Deployment completed successfully!"
