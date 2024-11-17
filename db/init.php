@@ -1,124 +1,83 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/database.php';
 
-$db = new Database();
-$pdo = new SQLite3(__DIR__ . '/votes.db');
+try {
+    // Read and execute schema
+    $schema = file_get_contents(__DIR__ . '/schema.sql');
+    if ($schema === false) {
+        throw new Exception("Could not read schema.sql");
+    }
 
-// Check if we already have data
-$result = $pdo->query('SELECT COUNT(*) as count FROM implementations');
-$count = $result->fetchArray(SQLITE3_ASSOC)['count'];
+    $db = new Database();
+    $result = $db->db->exec($schema);
+    if ($result === false) {
+        throw new Exception("Failed to execute schema: " . $db->db->lastErrorMsg());
+    }
 
-if ($count > 0) {
-    echo "Database already contains data. Skipping initialization.\n";
-    exit;
+    // Sample implementations
+    $implementations = [
+        [
+            'name' => 'Superwall',
+            'logo_url' => '/logos/superwall.svg',
+            'description' => 'Paywall infrastructure for mobile apps',
+            'llms_txt_url' => 'https://docs.superwall.com/llms.txt',
+            'has_full' => 1,
+            'is_featured' => 1,
+            'is_requested' => 0,
+            'is_draft' => 0,
+            'votes' => 15
+        ],
+        [
+            'name' => 'Anthropic',
+            'logo_url' => '/logos/anthropic.svg',
+            'description' => 'AI research company and creator of Claude',
+            'llms_txt_url' => 'https://docs.anthropic.com/llms.txt',
+            'has_full' => 1,
+            'is_featured' => 1,
+            'is_requested' => 0,
+            'is_draft' => 0,
+            'votes' => 25
+        ]
+    ];
+
+    // Requested implementations
+    $requested = [
+        [
+            'name' => 'Vercel',
+            'logo_url' => '/logos/vercel.png',
+            'description' => 'Frontend cloud platform and framework provider',
+            'llms_txt_url' => 'https://vercel.com/docs/llms.txt',
+            'has_full' => 0,
+            'is_featured' => 0,
+            'is_requested' => 1,
+            'is_draft' => 0,
+            'votes' => 42
+        ],
+        [
+            'name' => 'Next.js',
+            'logo_url' => '/logos/nextjs.png',
+            'description' => 'React framework for production',
+            'llms_txt_url' => 'https://nextjs.org/docs/llms.txt',
+            'has_full' => 0,
+            'is_featured' => 0,
+            'is_requested' => 1,
+            'is_draft' => 0,
+            'votes' => 38
+        ]
+    ];
+
+    // Insert all implementations
+    foreach (array_merge($implementations, $requested) as $impl) {
+        if (!$db->addImplementation($impl)) {
+            error_log("Failed to add implementation: {$impl['name']}");
+        }
+    }
+
+    echo "Database initialized successfully.\n";
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+    exit(1);
 }
-
-// Regular implementations
-$implementations = [
-    [
-        'name' => 'Superwall',
-        'logo_url' => 'https://superwall.com/logo.svg',
-        'llms_txt_url' => 'https://superwall.com/docs/llms.txt',
-        'has_full' => true,
-        'is_requested' => false,
-        'is_draft' => false
-    ],
-    [
-        'name' => 'Anthropic',
-        'logo_url' => 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Anthropic_logo.svg',
-        'llms_txt_url' => 'http://docs.anthropic.com/llms.txt',
-        'has_full' => true,
-        'is_requested' => false,
-        'is_draft' => false
-    ],
-    [
-        'name' => 'Cursor',
-        'logo_url' => 'https://cursor.sh/cursor.svg',
-        'llms_txt_url' => 'https://docs.cursor.com/llms.txt',
-        'has_full' => true,
-        'is_requested' => false,
-        'is_draft' => false
-    ],
-    [
-        'name' => 'FastHTML',
-        'logo_url' => 'https://fastht.ml/logo.png',
-        'llms_txt_url' => 'https://docs.fastht.ml/llms.txt',
-        'has_full' => false,
-        'is_requested' => false,
-        'is_draft' => false
-    ],
-    [
-        'name' => 'nbdev',
-        'logo_url' => 'https://nbdev.fast.ai/images/logo.png',
-        'llms_txt_url' => 'https://nbdev.fast.ai/llms.txt',
-        'has_full' => true,
-        'is_requested' => false,
-        'is_draft' => false
-    ],
-    [
-        'name' => 'fastcore',
-        'logo_url' => 'https://fastcore.fast.ai/images/logo.png',
-        'llms_txt_url' => 'https://fastcore.fast.ai/llms.txt',
-        'has_full' => true,
-        'is_requested' => false,
-        'is_draft' => false
-    ],
-    [
-        'name' => 'Answer.AI',
-        'logo_url' => 'https://answer.ai/logo.png',
-        'llms_txt_url' => 'https://answer.ai/llms.txt',
-        'has_full' => true,
-        'is_requested' => false,
-        'is_draft' => false
-    ]
-];
-
-// Requested implementations
-$requested = [
-    [
-        'name' => 'Vercel',
-        'logo_url' => 'https://assets.vercel.com/image/upload/front/favicon/vercel/180x180.png',
-        'description' => 'Frontend cloud platform and framework provider',
-        'llms_txt_url' => '',
-        'has_full' => false,
-        'is_requested' => true,
-        'is_draft' => false,
-        'votes' => 42
-    ],
-    [
-        'name' => 'Next.js',
-        'logo_url' => 'https://nextjs.org/static/favicon/favicon-32x32.png',
-        'description' => 'React framework for production-grade applications',
-        'llms_txt_url' => '',
-        'has_full' => false,
-        'is_requested' => true,
-        'is_draft' => false,
-        'votes' => 38
-    ],
-    [
-        'name' => 'Stripe',
-        'logo_url' => 'https://stripe.com/img/v3/home/twitter.png',
-        'description' => 'Payment processing platform for internet businesses',
-        'llms_txt_url' => '',
-        'has_full' => false,
-        'is_requested' => true,
-        'is_draft' => false,
-        'votes' => 35
-    ]
-];
-
-// Insert all implementations
-foreach (array_merge($implementations, $requested) as $impl) {
-    $stmt = $pdo->prepare('INSERT INTO implementations (name, logo_url, description, llms_txt_url, has_full, is_requested, is_draft, votes) VALUES (:name, :logo_url, :description, :llms_txt_url, :has_full, :is_requested, :is_draft, :votes)');
-    $stmt->bindValue(':name', $impl['name'], SQLITE3_TEXT);
-    $stmt->bindValue(':logo_url', $impl['logo_url'], SQLITE3_TEXT);
-    $stmt->bindValue(':description', $impl['description'] ?? '', SQLITE3_TEXT);
-    $stmt->bindValue(':llms_txt_url', $impl['llms_txt_url'], SQLITE3_TEXT);
-    $stmt->bindValue(':has_full', $impl['has_full'] ? 1 : 0, SQLITE3_INTEGER);
-    $stmt->bindValue(':is_requested', $impl['is_requested'] ? 1 : 0, SQLITE3_INTEGER);
-    $stmt->bindValue(':is_draft', $impl['is_draft'] ? 1 : 0, SQLITE3_INTEGER);
-    $stmt->bindValue(':votes', $impl['votes'] ?? 0, SQLITE3_INTEGER);
-    $stmt->execute();
-}
-
-echo "Database initialized with sample data.\n";
