@@ -22,30 +22,25 @@ chown -R llmstxtdirectory:www-data public/logos
 chmod -R 775 public/logos
 
 # Create and initialize database if it doesn't exist
+mkdir -p db
+chmod 755 db
+
 if [ ! -f "db/votes.db" ] || [ ! -s "db/votes.db" ]; then
     echo "Initializing database..."
     rm -f db/votes.db
     touch db/votes.db
     chown llmstxtdirectory:www-data db/votes.db
     chmod 664 db/votes.db
-    sudo -u llmstxtdirectory php db/init.php
+    php db/init.php
 else
     echo "Database exists, checking schema..."
-    # Apply schema updates
-    sudo -u llmstxtdirectory php -r "
-        require_once 'db/database.php';
-        \$db = new Database();
-        \$schema = file_get_contents('db/schema.sql');
-        \$db->db->exec(\$schema);
-    "
+    # Apply schema updates without sudo
+    php db/init.php
 fi
 
 # Set database permissions
 chown llmstxtdirectory:www-data db/votes.db
 chmod 664 db/votes.db
-
-# Ensure db directory is accessible
-chmod 755 db
 
 # Restart PHP
 ( flock -w 10 9 || exit 1
