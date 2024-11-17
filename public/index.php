@@ -509,7 +509,7 @@
                 <h2>What is the <code><strong>/llms.txt</strong></code> file?</h2>
                 <p>A web standard that helps AI tools better understand technical documentation through a structured markdown file at <code><strong>/llms.txt</strong></code>. By providing concise, machine-readable information, it enables AI assistants to give more accurate and contextual responses about your project or tool.</p>
                 <p>Similar to how <code><strong>robots.txt</strong></code> guides search engines, <code><strong>/llms.txt</strong></code> helps AI models like ChatGPT, Claude, Llama, etc understand your documentation's structure and content. This standardized format ensures that developers get precise, up-to-date information when using AI-powered development tools.</p>
-                <p>For more information about the standard, visit the <a href="https://llmstxt.org/" class="learn-more" target="_blank">official website</a>.</p>
+                <p>testss For more information about the standard, visit the <a href="https://llmstxt.org/" class="learn-more" target="_blank">official website</a>.</p>
             </div>
 
         </div>
