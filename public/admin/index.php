@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'llms_txt_url' => $_POST['llms_txt_url'],
                     'has_full' => isset($_POST['has_full']) ? 1 : 0,
                     'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
+                    'is_draft' => isset($_POST['is_draft']) ? 1 : 0,
                     'is_requested' => isset($_POST['is_requested']) ? 1 : 0
                 ];
                 
@@ -151,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'llms_txt_url' => $_POST['llms_txt_url'],
                     'has_full' => isset($_POST['has_full']) ? 1 : 0,
                     'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
+                    'is_draft' => isset($_POST['is_draft']) ? 1 : 0,
                     'is_requested' => isset($_POST['is_requested']) ? 1 : 0
                 ];
                 
@@ -426,6 +428,7 @@ $implementations = $db->getImplementations();
                         <th class="url">llms.txt URL</th>
                         <th class="status">Has Full</th>
                         <th class="status">Is Featured</th>
+                        <th class="status">Is Draft</th>
                         <th class="status">Type</th>
                         <th class="votes">Votes</th>
                         <th class="actions">Actions</th>
@@ -435,13 +438,14 @@ $implementations = $db->getImplementations();
                     <?php foreach ($implementations as $impl): ?>
                     <tr>
                         <td class="name"><?= htmlspecialchars($impl['name']) ?></td>
-                        <td class="logo"><?= htmlspecialchars($impl['logo_url']) ?></td>
+                        <td class="logo"><?= htmlspecialchars($impl['logo_url'] ?? '') ?></td>
                         <td class="description"><?= htmlspecialchars($impl['description'] ?? '') ?></td>
-                        <td class="url"><?= htmlspecialchars($impl['llms_txt_url']) ?></td>
+                        <td class="url"><?= htmlspecialchars($impl['llms_txt_url'] ?? '') ?></td>
                         <td class="status"><?= $impl['has_full'] ? 'Yes' : 'No' ?></td>
                         <td class="status"><?= $impl['is_featured'] ? 'Yes' : 'No' ?></td>
+                        <td class="status"><?= $impl['is_draft'] ? 'Yes' : 'No' ?></td>
                         <td class="status"><?= $impl['is_requested'] ? 'Requested' : 'Regular' ?></td>
-                        <td class="votes"><?= htmlspecialchars($impl['votes']) ?></td>
+                        <td class="votes"><?= htmlspecialchars((string)($impl['votes'] ?? 0)) ?></td>
                         <td class="actions">
                             <button class="btn btn-edit" onclick="showEditModal(<?= htmlspecialchars(json_encode($impl)) ?>)">Edit</button>
                             <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this implementation?')">
@@ -463,41 +467,49 @@ $implementations = $db->getImplementations();
             <h2 id="modalTitle">Add New Implementation</h2>
             <form id="implementationForm" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" id="formAction" value="add">
-                <input type="hidden" name="id" id="formId">
-                
+                <input type="hidden" name="id" id="edit-id" value="">
+
                 <div class="form-group">
-                    <label for="name">Name</label>
+                    <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="logo">Logo</label>
-                    <input type="file" id="logo" name="logo" accept="image/svg+xml,image/png,image/jpeg">
-                    <div class="logo-preview"></div>
-                    <p class="hint">Supported formats: SVG, PNG, JPEG. Will be displayed at 32x32px.</p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input type="text" id="description" name="description">
                 </div>
 
                 <div class="form-group">
-                    <label for="llms_txt_url">llms.txt URL</label>
-                    <input type="text" id="llms_txt_url" name="llms_txt_url">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="llms_txt_url">llms.txt URL:</label>
+                    <input type="url" id="llms_txt_url" name="llms_txt_url" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="logo">Logo:</label>
+                    <input type="file" id="logo" name="logo" accept=".svg,.png,.jpg,.jpeg">
+                    <div class="logo-preview" style="display: none;">
+                        <img src="" alt="Logo preview">
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="has_full" name="has_full" value="1">
-                        Has llms-full.txt
+                        Has Full Implementation
                     </label>
                 </div>
 
                 <div class="form-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="is_featured" name="is_featured" value="1">
-                        Featured Implementation
+                        Featured
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is_draft" name="is_draft" value="1">
+                        Draft
                     </label>
                 </div>
 
@@ -507,10 +519,10 @@ $implementations = $db->getImplementations();
                         Is Requested Implementation
                     </label>
                 </div>
-                
+
                 <div class="modal-actions">
-                    <button type="button" class="btn" onclick="hideModal()">Cancel</button>
                     <button type="submit" class="btn add-new">Save</button>
+                    <button type="button" class="btn cancel" onclick="closeModal()">Cancel</button>
                 </div>
             </form>
         </div>
@@ -520,13 +532,13 @@ $implementations = $db->getImplementations();
         function showAddModal() {
             document.getElementById('modalTitle').textContent = 'Add New Implementation';
             document.getElementById('formAction').value = 'add';
-            document.getElementById('formId').value = '';
+            document.getElementById('edit-id').value = '';
             document.getElementById('name').value = '';
-            document.getElementById('logo').value = '';
             document.getElementById('description').value = '';
             document.getElementById('llms_txt_url').value = '';
             document.getElementById('has_full').checked = false;
             document.getElementById('is_featured').checked = false;
+            document.getElementById('is_draft').checked = false;
             document.getElementById('is_requested').checked = false;
             document.querySelector('.logo-preview').style.display = 'none';
             document.getElementById('modal').style.display = 'flex';
@@ -535,19 +547,19 @@ $implementations = $db->getImplementations();
         function showEditModal(impl) {
             document.getElementById('modalTitle').textContent = 'Edit Implementation';
             document.getElementById('formAction').value = 'edit';
-            document.getElementById('formId').value = impl.id;
-            document.getElementById('name').value = impl.name;
+            document.getElementById('edit-id').value = impl.id;
+            document.getElementById('name').value = impl.name || '';
             document.getElementById('description').value = impl.description || '';
             document.getElementById('llms_txt_url').value = impl.llms_txt_url || '';
             document.getElementById('has_full').checked = impl.has_full === 1;
             document.getElementById('is_featured').checked = impl.is_featured === 1;
+            document.getElementById('is_draft').checked = impl.is_draft === 1;
             document.getElementById('is_requested').checked = impl.is_requested === 1;
             
-            // Show current logo
             const preview = document.querySelector('.logo-preview');
             if (impl.logo_url) {
-                preview.innerHTML = `<img src="${impl.logo_url}" alt="Current logo">`;
                 preview.style.display = 'block';
+                preview.querySelector('img').src = impl.logo_url;
             } else {
                 preview.style.display = 'none';
             }
@@ -555,33 +567,9 @@ $implementations = $db->getImplementations();
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function hideModal() {
+        function closeModal() {
             document.getElementById('modal').style.display = 'none';
         }
-
-        // Close modal when clicking outside
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideModal();
-            }
-        });
-
-        // Handle file input change
-        document.getElementById('logo').addEventListener('change', function(e) {
-            const preview = document.querySelector('.logo-preview');
-            const file = e.target.files[0];
-            
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Logo preview">`;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.style.display = 'none';
-            }
-        });
     </script>
 </body>
 </html>
