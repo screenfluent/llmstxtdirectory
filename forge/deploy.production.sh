@@ -1,22 +1,17 @@
-#!/bin/bash
-
-# Production deployment script
+cd /home/llmstxtdirectory/llmstxt.directory
 
 # Exit on error
 set -e
-
-# Turn on maintenance mode
-php artisan down || true
 
 echo "🚀 Starting production deployment..."
 
 # Pull the latest changes from the git repository
 echo "📥 Pulling latest changes..."
-git pull origin production
+git pull origin $FORGE_SITE_BRANCH
 
 # Install/update composer dependencies
 echo "📦 Installing dependencies..."
-composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+$FORGE_COMPOSER install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 # Create necessary directories
 echo "📁 Setting up directories..."
@@ -27,19 +22,19 @@ mkdir -p public/logos
 echo "🔒 Setting permissions..."
 chmod -R 775 storage
 chmod -R 775 public/logos
-chown -R forge:forge .
+chmod -R 775 db
+chmod 775 .
 
 # Ensure database exists
 echo "🗄️ Checking database..."
 if [ ! -f "db/votes.db" ]; then
     echo "⚠️ Database not found, initializing..."
     php db/init.php
+    chmod 664 db/votes.db
 fi
 
 # Clear caches
 echo "🧹 Clearing caches..."
 php -r "if(function_exists('opcache_reset')) { opcache_reset(); }"
 
-# Turn off maintenance mode
 echo "✅ Deployment complete!"
-php artisan up || true
