@@ -753,7 +753,7 @@
             </div>
         </div>
         <div class="footer">
-            <p>Created by <a href="https://twitter.com/szymonfiedler" target="_blank">Szymon Fiedler</a> • <a href="https://github.com/screenfluent/llmstxtdirectory" target="_blank">GitHub</a></p>
+            <p>Created by <a href="https://x.com/screenfluent" target="_blank">Szymon Rączka</a> • <a href="https://github.com/screenfluent/llmstxtdirectory" target="_blank">GitHub</a></p>
             <p class="version">Version 1.0.0 • Last updated: <?php echo date('F j, Y'); ?> • TEST STAGING DEPLOY</p>
         </div>
     </footer>
