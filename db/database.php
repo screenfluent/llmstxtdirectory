@@ -3,10 +3,32 @@ require_once __DIR__ . '/../includes/monitoring.php';
 
 class Database {
     public $db;
+    private $dbPath;
 
     public function __construct() {
-        $this->db = new SQLite3(__DIR__ . '/votes.db');
+        $this->dbPath = __DIR__ . '/votes.db';
+        $this->connect();
+    }
+
+    private function connect() {
+        $this->db = new SQLite3($this->dbPath);
         $this->db->enableExceptions(true);
+    }
+
+    public function recreateDatabase() {
+        // Close existing connection
+        if ($this->db) {
+            $this->db->close();
+        }
+
+        // Delete existing database file
+        if (file_exists($this->dbPath)) {
+            unlink($this->dbPath);
+        }
+
+        // Reconnect to create new database
+        $this->connect();
+        return true;
     }
 
     public function executeRawSQL($sql) {
