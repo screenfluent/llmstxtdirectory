@@ -20,9 +20,32 @@ git commit -m "Descriptive message"
 git push origin staging
 ```
 
+## Server Configuration
+
+### Nginx Configuration Files
+
+The project uses two nginx configuration files:
+- `nginx.conf`: Production configuration (llmstxt.directory)
+- `nginx.staging.conf`: Staging configuration (staging.llmstxt.directory)
+
+Key differences between environments:
+- Different SSL certificate paths
+- Environment-specific PHP-FPM sockets
+- Staging-specific development timeouts
+
+To update nginx configuration:
+1. Make changes locally in the appropriate .conf file
+2. Test configuration syntax
+3. Update in Forge:
+   - Go to server
+   - Click "Edit Files"
+   - Select nginx configuration
+   - Paste new configuration
+   - Save and verify nginx restarts successfully
+
 ## Staging Deployment
 
-1. Changes automatically deploy to https://staging.llmstxt.directory
+1. Changes automatically deploy to https://staging.llmstxt.directory via Forge's Quick Deploy
 
 2. If changes aren't visible:
    - Go to Forge dashboard
@@ -30,6 +53,11 @@ git push origin staging
    - Click "Deploy Now"
    - Watch deployment log
    - If needed, click "Restart PHP"
+
+3. Verify deployment:
+   - Check site loads correctly
+   - Test all modified features
+   - Verify error logs: `/var/log/nginx/staging.llmstxt.directory-error.log`
 
 ## Production Deployment
 
@@ -41,6 +69,21 @@ git push origin production
 ```
 
 Visit https://llmstxt.directory to verify changes.
+
+## Environment Management
+
+### PHP Configuration
+- Production: php8.3-fpm-llmstxtdirectory.sock
+- Staging: php8.3-fpm-stagingllmstxtdirectory.sock
+
+### Database Management
+- Production: Preserves data between deployments
+- Staging: Fresh database on each deployment
+
+### SSL Certificates
+Managed by Forge:
+- Production: /etc/nginx/ssl/llmstxt.directory/[cert_id]/
+- Staging: /etc/nginx/ssl/staging.llmstxt.directory/[cert_id]/
 
 ## Git Commands Reference
 
@@ -98,53 +141,33 @@ git reset --hard HEAD^
 git push origin production --force
 ```
 
-3. Rollback specific file:
-```bash
-# Get file from previous commit
-git checkout HEAD^ -- path/to/file
-git commit -m "Rollback file to previous version"
-git push origin staging  # for staging
-# or
-git push origin production  # for production
-```
+## Troubleshooting
 
-4. Emergency Rollback in Forge:
-- Go to Forge dashboard
-- Click site name
-- Click "Site" tab
-- Click "Revert to Previous Deployment"
+### Common Issues
 
-## Deployment Scripts
+1. Nginx Configuration:
+- Check syntax: `nginx -t`
+- Review error logs: `tail -f /var/log/nginx/*.log`
+- Verify SSL certificate paths
+- Check PHP-FPM socket paths
 
-### Staging
-Location: `forge/deploy.staging.sh`
-- Handles file permissions
-- Updates code from GitHub
-- Manages dependencies
-- Restarts PHP
+2. PHP Issues:
+- Check PHP-FPM status
+- Review PHP error logs
+- Verify correct PHP version (8.3)
+- Check file permissions
 
-### Production
-Location: `forge/deploy.production.sh`
-- Similar to staging
-- Excludes development dependencies
-- Includes additional safety checks
+3. Deployment Issues:
+- Verify Forge deployment script execution
+- Check Git branch status
+- Review deployment logs in Forge
+- Verify database migrations
 
-## Common Issues
+### Emergency Contacts
 
-1. Changes not visible after deployment:
-   - Check deployment logs in Forge
-   - Restart PHP in Forge dashboard
-   - Verify correct branch was pushed
-
-2. Permission issues:
-   - Check file ownership
-   - Verify directory permissions
-   - Review deployment logs
-
-3. Database issues:
-   - Check if db/votes.db exists
-   - Verify file permissions
-   - Review error logs
+- Server Issues: Laravel Forge Support
+- Domain/SSL: Forge/Domain Registrar
+- Application: Development Team
 
 ## Useful Commands
 
