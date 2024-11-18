@@ -3,16 +3,22 @@
 # Enable error reporting
 set -e
 
-# Configure git
-git config --global --add safe.directory /home/stagingllmstxtdirectory/staging.llmstxt.directory
-
-# Update repository
+# Change to the correct directory first
 cd /home/stagingllmstxtdirectory/staging.llmstxt.directory
 
-# Initial git setup
-git fetch --all
-git checkout -f staging || git checkout -f main
-git pull origin staging || git pull origin main
+# Clear any cached git configs
+rm -f ~/.gitconfig
+rm -rf .git
+rm -rf *
+
+# Reinitialize git
+git init
+git config --global --add safe.directory /home/stagingllmstxtdirectory/staging.llmstxt.directory
+git remote add origin https://github.com/screenfluent/llmstxtdirectory.git
+
+# Fetch and reset to staging branch
+git fetch origin staging
+git checkout -f -b staging --track origin/staging
 
 # Set permissions
 chown -R stagingllmstxtdirectory:stagingllmstxtdirectory .
@@ -40,15 +46,25 @@ echo "Initializing database with fresh schema and sample data..."
 php -r "
     require_once 'db/database.php';
     \$db = new Database();
-    \$schema = file_get_contents('db/schema.sql');
-    \$db->db->exec('BEGIN TRANSACTION;');
+    
     try {
-        \$db->db->exec(\$schema);
+        // Initialize schema
+        \$schema = file_get_contents('db/schema.sql');
+        if (\$schema === false) {
+            throw new Exception('Could not read schema.sql');
+        }
+        
+        // Execute schema
+        \$result = \$db->db->exec(\$schema);
+        if (\$result === false) {
+            throw new Exception('Failed to execute schema: ' . \$db->db->lastErrorMsg());
+        }
+        
+        // Initialize sample data
         require_once 'db/init.php';
-        \$db->db->exec('COMMIT;');
+        
         echo \"Database initialized successfully.\n\";
     } catch (Exception \$e) {
-        \$db->db->exec('ROLLBACK;');
         echo \"Error initializing database: \" . \$e->getMessage() . \"\n\";
         exit(1);
     }

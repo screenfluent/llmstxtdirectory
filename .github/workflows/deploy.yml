@@ -2,21 +2,20 @@ name: Deploy
 
 on:
   push:
-    branches: [ main, production ]
+    branches: [ staging, production ]
 
 jobs:
-  lint:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress
-        
-      - name: Check PHP syntax
-        run: find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+    - uses: actions/checkout@v2
+    
+    - name: Deploy to Forge
+      env:
+        FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+      run: |
+        if [[ $GITHUB_REF == "refs/heads/production" ]]; then
+          curl -X POST ${{ secrets.FORGE_PRODUCTION_DEPLOY_URL }}
+        elif [[ $GITHUB_REF == "refs/heads/staging" ]]; then
+          curl -X POST ${{ secrets.FORGE_STAGING_DEPLOY_URL }}
+        fi

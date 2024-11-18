@@ -2,10 +2,10 @@
 
 ## Local Development
 
-1. Make sure you're on main branch:
+1. Make sure you're on staging branch:
 ```bash
-git checkout main
-git pull origin main
+git checkout staging
+git pull origin staging
 ```
 
 2. Make changes and test locally:
@@ -17,7 +17,7 @@ git pull origin main
 ```bash
 git add .
 git commit -m "Descriptive message"
-git push origin main
+git push origin staging
 ```
 
 ## Staging Deployment
@@ -36,7 +36,7 @@ git push origin main
 After verifying on staging:
 ```bash
 git checkout production
-git merge main
+git merge staging
 git push origin production
 ```
 
@@ -88,7 +88,7 @@ git revert HEAD
 # or
 git reset --hard HEAD^
 
-git push origin main --force
+git push origin staging --force
 ```
 
 2. Production Rollback:
@@ -103,7 +103,7 @@ git push origin production --force
 # Get file from previous commit
 git checkout HEAD^ -- path/to/file
 git commit -m "Rollback file to previous version"
-git push origin main  # for staging
+git push origin staging  # for staging
 # or
 git push origin production  # for production
 ```

@@ -28,40 +28,42 @@ php db/init.php
 
 ## Deployment
 
-The site uses Laravel Forge for deployment. The deployment process is:
+1. Push changes to the `staging` branch for testing
+2. Once tested, merge to `production` branch for production deployment
 
-1. Push changes to the `main` branch for staging
-2. Push changes to the `production` branch for live site
+## Branches
 
-### Branch Strategy
+- `staging`: Development branch, deploys to staging
+- `production`: Production branch, deploys to production
 
-- `main`: Development branch, deploys to staging
-- `production`: Production branch, deploys to live site
-- `feature/*`: Feature branches
-- `fix/*`: Bug fix branches
+## Development Workflow
 
-### Deployment Process
-
-1. Create feature branch:
+1. Clone the repository and checkout staging branch:
 ```bash
-git checkout main
-git pull origin main
-git checkout -b feature/your-feature
+git clone https://github.com/screenfluent/llmstxtdirectory.git
+cd llmstxtdirectory
+git checkout staging
+git pull origin staging
 ```
 
-2. Make changes and test locally
+2. Make your changes and commit them:
+```bash
+git add .
+git commit -m "Your commit message"
+```
 
 3. Push to staging:
 ```bash
-git checkout main
-git merge feature/your-feature
-git push origin main
+git checkout staging
+git pull origin staging
+git push origin staging
 ```
 
-4. After testing on staging, deploy to production:
+4. After testing on staging, merge to production:
 ```bash
 git checkout production
-git merge main
+git pull origin production
+git merge staging
 git push origin production
 ```
 
