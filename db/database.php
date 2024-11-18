@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/monitoring.php';
 
 class Database {
-    protected $db;
+    public $db;
 
     public function __construct() {
         $this->db = new SQLite3(__DIR__ . '/votes.db');

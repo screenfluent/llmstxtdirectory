@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/environment.php';
+
 function logPerformanceMetric($metric, $value, $tags = []) {
     $logEntry = [
         'timestamp' => date('Y-m-d H:i:s'),
