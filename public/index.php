@@ -610,7 +610,7 @@
                     <?php
                     $implementations = $db->getFeaturedImplementations();
                     foreach ($implementations as $impl) {
-                        $homepage = str_replace('/docs/llms.txt', '', $impl['llms_txt_url']);
+                        $homepage = str_replace('/docs/llms.txt', '', $impl['llms_txt_url'] ?? '');
                         $homepage = str_replace('/llms.txt', '', $homepage);
                         
                         echo '<div class="card" onclick="window.location.href=\'' . htmlspecialchars($homepage) . '\'">
@@ -622,24 +622,28 @@
                                 <div class="card-inner">
                                     <div class="card-content">
                                         <div class="title-row">
-                                            <div class="logo-wrapper">
-                                                <img src="' . htmlspecialchars($impl['logo_url']) . '" alt="' . htmlspecialchars($impl['name']) . ' logo">
-                                            </div>
+                                            <div class="logo-wrapper">';
+                        if (!empty($impl['logo_url'])) {
+                            echo '              <img src="' . htmlspecialchars($impl['logo_url']) . '" alt="' . htmlspecialchars($impl['name']) . ' logo">';
+                        } else {
+                            echo '              <div class="no-logo">' . htmlspecialchars(substr($impl['name'], 0, 1)) . '</div>';
+                        }
+                        echo '              </div>
                                             <div class="card-title">' . htmlspecialchars($impl['name']) . '</div>
                                         </div>
                                         <div class="description-wrapper">';
                         if (!empty($impl['description'])) {
-                            echo '      <p class="card-description">' . htmlspecialchars($impl['description']) . '</p>';
+                            echo '              <p class="card-description">' . htmlspecialchars($impl['description']) . '</p>';
                         } else {
-                            echo '      <p class="card-description">&nbsp;</p>';
+                            echo '              <p class="card-description">&nbsp;</p>';
                         }
-                        echo '          </div>
+                        echo '              </div>
                                         <div class="card-labels">
-                                            <a href="' . htmlspecialchars($impl['llms_txt_url']) . '" class="label label-txt" onclick="event.stopPropagation()">llms.txt</a>';
+                                            <a href="' . htmlspecialchars($impl['llms_txt_url'] ?? '#') . '" class="label label-txt" onclick="event.stopPropagation()">llms.txt</a>';
                         if ($impl['has_full']) {
-                            echo '          <a href="' . str_replace('llms.txt', 'llms-full.txt', htmlspecialchars($impl['llms_txt_url'])) . '" class="label label-full" onclick="event.stopPropagation()">llms-full.txt</a>';
+                            echo '              <a href="' . str_replace('llms.txt', 'llms-full.txt', htmlspecialchars($impl['llms_txt_url'] ?? '')) . '" class="label label-full" onclick="event.stopPropagation()">llms-full.txt</a>';
                         }
-                        echo '          </div>
+                        echo '              </div>
                                     </div>
                                 </div>
                             </div>';
@@ -673,7 +677,7 @@
                     <?php
                     $recentImplementations = $db->getRecentlyAddedImplementations();
                     foreach ($recentImplementations as $impl) {
-                        $homepage = str_replace('/docs/llms.txt', '', $impl['llms_txt_url']);
+                        $homepage = str_replace('/docs/llms.txt', '', $impl['llms_txt_url'] ?? '');
                         $homepage = str_replace('/llms.txt', '', $homepage);
                         
                         echo '<div class="card" onclick="window.location.href=\'' . htmlspecialchars($homepage) . '\'">
@@ -685,24 +689,28 @@
                                 <div class="card-inner">
                                     <div class="card-content">
                                         <div class="title-row">
-                                            <div class="logo-wrapper">
-                                                <img src="' . htmlspecialchars($impl['logo_url']) . '" alt="' . htmlspecialchars($impl['name']) . ' logo">
-                                            </div>
+                                            <div class="logo-wrapper">';
+                        if (!empty($impl['logo_url'])) {
+                            echo '              <img src="' . htmlspecialchars($impl['logo_url']) . '" alt="' . htmlspecialchars($impl['name']) . ' logo">';
+                        } else {
+                            echo '              <div class="no-logo">' . htmlspecialchars(substr($impl['name'], 0, 1)) . '</div>';
+                        }
+                        echo '              </div>
                                             <div class="card-title">' . htmlspecialchars($impl['name']) . '</div>
                                         </div>
                                         <div class="description-wrapper">';
                         if (!empty($impl['description'])) {
-                            echo '      <p class="card-description">' . htmlspecialchars($impl['description']) . '</p>';
+                            echo '              <p class="card-description">' . htmlspecialchars($impl['description']) . '</p>';
                         } else {
-                            echo '      <p class="card-description">&nbsp;</p>';
+                            echo '              <p class="card-description">&nbsp;</p>';
                         }
-                        echo '          </div>
+                        echo '              </div>
                                         <div class="card-labels">
-                                            <a href="' . htmlspecialchars($impl['llms_txt_url']) . '" class="label label-txt" onclick="event.stopPropagation()">llms.txt</a>';
+                                            <a href="' . htmlspecialchars($impl['llms_txt_url'] ?? '#') . '" class="label label-txt" onclick="event.stopPropagation()">llms.txt</a>';
                         if ($impl['has_full']) {
-                            echo '          <a href="' . str_replace('llms.txt', 'llms-full.txt', htmlspecialchars($impl['llms_txt_url'])) . '" class="label label-full" onclick="event.stopPropagation()">llms-full.txt</a>';
+                            echo '              <a href="' . str_replace('llms.txt', 'llms-full.txt', htmlspecialchars($impl['llms_txt_url'] ?? '')) . '" class="label label-full" onclick="event.stopPropagation()">llms-full.txt</a>';
                         }
-                        echo '          </div>
+                        echo '              </div>
                                     </div>
                                 </div>
                             </div>';
