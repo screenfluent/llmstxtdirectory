@@ -1,9 +1,8 @@
 <?php
 
 class ImageOptimizer {
-    private const MAX_WIDTH = 400;  // Maximum width for logos
-    private const MAX_HEIGHT = 200; // Maximum height for logos
-    private const WEBP_QUALITY = 85; // WebP quality (0-100)
+    private const MAX_SIZE = 64;    // Maximum width or height
+    private const WEBP_QUALITY = 95; // WebP quality (0-100)
     private const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
     
     private string $uploadDir;
@@ -21,9 +20,10 @@ class ImageOptimizer {
      * Process and optimize an uploaded image
      * 
      * @param array $uploadedFile $_FILES array item
+     * @param string $name Implementation name for the filename
      * @return array{success: bool, filename?: string, error?: string}
      */
-    public function processUploadedImage(array $uploadedFile): array {
+    public function processUploadedImage(array $uploadedFile, string $name): array {
         try {
             // Validate upload
             if (!isset($uploadedFile['tmp_name']) || !is_uploaded_file($uploadedFile['tmp_name'])) {
@@ -53,22 +53,25 @@ class ImageOptimizer {
             $origHeight = imagesy($sourceImage);
             
             // Calculate new dimensions while maintaining aspect ratio
-            $ratio = min(self::MAX_WIDTH / $origWidth, self::MAX_HEIGHT / $origHeight);
-            $newWidth = (int)($origWidth * $ratio);
-            $newHeight = (int)($origHeight * $ratio);
+            if ($origWidth > $origHeight) {
+                $newWidth = min($origWidth, self::MAX_SIZE);
+                $newHeight = (int)($origHeight * ($newWidth / $origWidth));
+            } else {
+                $newHeight = min($origHeight, self::MAX_SIZE);
+                $newWidth = (int)($origWidth * ($newHeight / $origHeight));
+            }
             
             // Create new image with calculated dimensions
             $newImage = imagecreatetruecolor($newWidth, $newHeight);
             
-            // Handle transparency for PNG images
-            if ($mimeType === 'image/png') {
-                imagealphablending($newImage, false);
-                imagesavealpha($newImage, true);
-                $transparent = imagecolorallocatealpha($newImage, 255, 255, 255, 127);
-                imagefilledrectangle($newImage, 0, 0, $newWidth, $newHeight, $transparent);
-            }
+            // Enable alpha channel
+            imagealphablending($newImage, false);
+            imagesavealpha($newImage, true);
+            $transparent = imagecolorallocatealpha($newImage, 255, 255, 255, 127);
+            imagefilledrectangle($newImage, 0, 0, $newWidth, $newHeight, $transparent);
+            imagealphablending($newImage, true);
             
-            // Resize image
+            // Resize image with high quality resampling
             imagecopyresampled(
                 $newImage, $sourceImage,
                 0, 0, 0, 0,
@@ -76,11 +79,12 @@ class ImageOptimizer {
                 $origWidth, $origHeight
             );
             
-            // Generate unique filename
+            // Generate filename from implementation name
+            $safeName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
             $filename = sprintf(
                 '%s/%s.webp',
                 $this->uploadDir,
-                substr(md5(uniqid(mt_rand(), true)), 0, 12)
+                $safeName
             );
             
             // Save as WebP

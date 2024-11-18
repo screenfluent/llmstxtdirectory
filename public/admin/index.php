@@ -3,11 +3,13 @@ require_once __DIR__ . '/../../includes/environment.php';
 require_once __DIR__ . '/../../includes/admin_auth.php';
 require_once __DIR__ . '/../../db/database.php';
 require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../../includes/ImageOptimizer.php';
 
 // Require authentication
 requireAdminAuth();
 
 $db = new Database();
+$imageOptimizer = new ImageOptimizer(__DIR__ . '/../logos');
 
 // Initialize message variables
 $message = '';
@@ -42,8 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
                     
                     // Validate file type
-                    if (in_array($ext, ['svg', 'png', 'jpg', 'jpeg'])) {
-                        $filename = get_logo_filename($_POST['name']) . '.' . $ext;
+                    if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'])) {
+                        $result = $imageOptimizer->processUploadedImage($file, $_POST['name']);
+                        if ($result['success']) {
+                            $data['logo_url'] = '/logos/' . $result['filename'];
+                        }
+                    } elseif ($ext === 'svg') {
+                        // Handle SVG files separately (no optimization needed)
+                        $filename = get_logo_filename($_POST['name']) . '.svg';
                         $target_path = __DIR__ . '/../logos/' . $filename;
                         
                         // Create logos directory if it doesn't exist
@@ -86,8 +94,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
                     
                     // Validate file type
-                    if (in_array($ext, ['svg', 'png', 'jpg', 'jpeg'])) {
-                        $filename = get_logo_filename($_POST['name']) . '.' . $ext;
+                    if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'])) {
+                        $result = $imageOptimizer->processUploadedImage($file, $_POST['name']);
+                        if ($result['success']) {
+                            $data['logo_url'] = '/logos/' . $result['filename'];
+                        }
+                    } elseif ($ext === 'svg') {
+                        // Handle SVG files separately (no optimization needed)
+                        $filename = get_logo_filename($_POST['name']) . '.svg';
                         $target_path = __DIR__ . '/../logos/' . $filename;
                         
                         // Create logos directory if it doesn't exist
