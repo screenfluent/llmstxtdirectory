@@ -5,7 +5,7 @@
       "branch": "production",
       "server": {
         "type": "forge",
-        "php_version": "8.2",
+        "php_version": "8.3",
         "webserver": "nginx"
       },
       "deployment": {
@@ -27,7 +27,7 @@
       "branch": "staging",
       "server": {
         "type": "forge",
-        "php_version": "8.2",
+        "php_version": "8.3",
         "webserver": "nginx"
       },
       "deployment": {

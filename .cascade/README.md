@@ -47,7 +47,7 @@ This directory contains comprehensive documentation and specifications for the l
 ## Technical Specifications
 
 ### Backend
-- PHP 8.2
+- PHP 8.3
 - SQLite3 Database
 - Nginx Web Server
 

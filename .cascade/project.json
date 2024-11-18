@@ -5,7 +5,7 @@
   "stack": {
     "backend": {
       "language": "PHP",
-      "version": "8.2",
+      "version": "8.3",
       "database": "SQLite3",
       "webserver": "nginx"
     },
