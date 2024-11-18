@@ -1,4 +1,8 @@
-<?php require_once __DIR__ . '/../includes/environment.php'; ?>
+<?php 
+require_once __DIR__ . '/../includes/environment.php';
+require_once __DIR__ . '/../includes/monitoring.php';
+$requestStart = startRequestTiming();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -773,5 +777,8 @@
             <p class="version">Version 0.5.0 • Last updated: <?php echo date('F j, Y'); ?></p>
         </div>
     </footer>
+    <?php
+    endRequestTiming($requestStart, '/');
+    ?>
 </body>
 </html>

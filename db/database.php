@@ -1,25 +1,49 @@
 <?php
+require_once __DIR__ . '/../includes/monitoring.php';
+
 class Database {
-    public $db;
+    private $db;
 
     public function __construct() {
+        $this->db = new SQLite3(__DIR__ . '/votes.db');
+        $this->db->enableExceptions(true);
+    }
+
+    private function executeQuery($query, $params = []) {
+        $start = microtime(true);
         try {
-            $this->db = new SQLite3(__DIR__ . '/votes.db');
-            $this->db->enableExceptions(true);
+            $stmt = $this->db->prepare($query);
+            
+            foreach ($params as $param => $value) {
+                if (is_int($value)) {
+                    $stmt->bindValue($param, $value, SQLITE3_INTEGER);
+                } else {
+                    $stmt->bindValue($param, $value, SQLITE3_TEXT);
+                }
+            }
+            
+            $result = $stmt->execute();
+            $duration = (microtime(true) - $start) * 1000; // Convert to milliseconds
+            logDatabaseQuery($query, $duration);
+            
+            return $result;
         } catch (Exception $e) {
-            error_log("Database connection error: " . $e->getMessage());
+            logError('Database error: ' . $e->getMessage(), [
+                'query' => $query,
+                'params' => $params
+            ]);
             throw $e;
         }
     }
 
     public function getImplementations() {
         try {
-            $stmt = $this->db->prepare('
+            $query = '
                 SELECT * FROM implementations 
                 WHERE is_draft = 0 
                 ORDER BY is_featured DESC, name ASC
-            ');
-            $result = $stmt->execute();
+            ';
+            $result = $this->executeQuery($query);
             $implementations = [];
             while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 $implementations[] = $row;
@@ -54,7 +78,7 @@ class Database {
             // Merge defaults with provided data
             $data = array_merge($defaults, $data);
 
-            $stmt = $this->db->prepare('
+            $query = '
                 INSERT INTO implementations (
                     name, logo_url, description, llms_txt_url, 
                     has_full, is_featured, is_requested, 
@@ -64,19 +88,19 @@ class Database {
                     :has_full, :is_featured, :is_requested,
                     :is_draft, :votes
                 )
-            ');
-            
-            $stmt->bindValue(':name', $data['name'], SQLITE3_TEXT);
-            $stmt->bindValue(':logo_url', $data['logo_url'], SQLITE3_TEXT);
-            $stmt->bindValue(':description', $data['description'], SQLITE3_TEXT);
-            $stmt->bindValue(':llms_txt_url', $data['llms_txt_url'], SQLITE3_TEXT);
-            $stmt->bindValue(':has_full', (int)$data['has_full'], SQLITE3_INTEGER);
-            $stmt->bindValue(':is_featured', (int)$data['is_featured'], SQLITE3_INTEGER);
-            $stmt->bindValue(':is_requested', (int)$data['is_requested'], SQLITE3_INTEGER);
-            $stmt->bindValue(':is_draft', (int)$data['is_draft'], SQLITE3_INTEGER);
-            $stmt->bindValue(':votes', (int)$data['votes'], SQLITE3_INTEGER);
-            
-            return $stmt->execute();
+            ';
+            $params = [
+                ':name' => $data['name'],
+                ':logo_url' => $data['logo_url'],
+                ':description' => $data['description'],
+                ':llms_txt_url' => $data['llms_txt_url'],
+                ':has_full' => (int)$data['has_full'],
+                ':is_featured' => (int)$data['is_featured'],
+                ':is_requested' => (int)$data['is_requested'],
+                ':is_draft' => (int)$data['is_draft'],
+                ':votes' => (int)$data['votes']
+            ];
+            return $this->executeQuery($query, $params);
         } catch (Exception $e) {
             error_log("Failed to add implementation: " . $e->getMessage());
             throw $e;
@@ -112,14 +136,7 @@ class Database {
             $values[':id'] = $id;
             
             $query = "UPDATE implementations SET " . implode(', ', $fields) . " WHERE id = :id";
-            $stmt = $this->db->prepare($query);
-            
-            foreach ($values as $key => $value) {
-                $type = is_int($value) ? SQLITE3_INTEGER : SQLITE3_TEXT;
-                $stmt->bindValue($key, $value, $type);
-            }
-            
-            return $stmt->execute();
+            return $this->executeQuery($query, $values);
         } catch (Exception $e) {
             error_log("Failed to update implementation: " . $e->getMessage());
             throw $e;
@@ -128,12 +145,12 @@ class Database {
 
     public function getFeaturedImplementations() {
         try {
-            $stmt = $this->db->prepare('
+            $query = '
                 SELECT * FROM implementations 
                 WHERE is_featured = 1 AND is_draft = 0 
                 ORDER BY name ASC
-            ');
-            $result = $stmt->execute();
+            ';
+            $result = $this->executeQuery($query);
             $implementations = [];
             while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                 $implementations[] = $row;
@@ -147,12 +164,12 @@ class Database {
 
     public function getRequestedImplementations() {
         try {
-            $stmt = $this->db->prepare('
+            $query = '
                 SELECT * FROM implementations 
                 WHERE is_requested = 1 AND is_draft = 0 
                 ORDER BY name ASC
-            ');
-            $result = $stmt->execute();
+            ';
+            $result = $this->executeQuery($query);
             return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
         } catch (Exception $e) {
             error_log("Database error: " . $e->getMessage());
@@ -162,9 +179,9 @@ class Database {
 
     public function getImplementationById($id) {
         try {
-            $stmt = $this->db->prepare('SELECT * FROM implementations WHERE id = :id LIMIT 1');
-            $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
-            $result = $stmt->execute();
+            $query = 'SELECT * FROM implementations WHERE id = :id LIMIT 1';
+            $params = [':id' => $id];
+            $result = $this->executeQuery($query, $params);
             
             if ($result === false) {
                 error_log("Database error: Failed to fetch implementation by ID");
@@ -184,14 +201,14 @@ class Database {
             $this->db->exec('BEGIN');
             
             // Delete votes first
-            $stmt = $this->db->prepare('DELETE FROM votes WHERE implementation_id = :id');
-            $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
-            $stmt->execute();
+            $query = 'DELETE FROM votes WHERE implementation_id = :id';
+            $params = [':id' => $id];
+            $this->executeQuery($query, $params);
             
             // Then delete the implementation
-            $stmt = $this->db->prepare('DELETE FROM implementations WHERE id = :id');
-            $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
-            $stmt->execute();
+            $query = 'DELETE FROM implementations WHERE id = :id';
+            $params = [':id' => $id];
+            $this->executeQuery($query, $params);
             
             // Commit transaction
             $this->db->exec('COMMIT');
@@ -207,10 +224,12 @@ class Database {
         $userIp = $_SERVER['REMOTE_ADDR'];
         
         // Check if user already voted
-        $stmt = $this->db->prepare('SELECT COUNT(*) as count FROM votes WHERE implementation_id = :impl_id AND user_ip = :user_ip');
-        $stmt->bindValue(':impl_id', $implementationId, SQLITE3_INTEGER);
-        $stmt->bindValue(':user_ip', $userIp, SQLITE3_TEXT);
-        $result = $stmt->execute()->fetchArray();
+        $query = 'SELECT COUNT(*) as count FROM votes WHERE implementation_id = :impl_id AND user_ip = :user_ip';
+        $params = [
+            ':impl_id' => $implementationId,
+            ':user_ip' => $userIp
+        ];
+        $result = $this->executeQuery($query, $params)->fetchArray();
         
         if ($result['count'] > 0) {
             return ['error' => 'Already voted'];
@@ -221,15 +240,17 @@ class Database {
         
         try {
             // Add vote record
-            $stmt = $this->db->prepare('INSERT INTO votes (implementation_id, user_ip) VALUES (:impl_id, :user_ip)');
-            $stmt->bindValue(':impl_id', $implementationId, SQLITE3_INTEGER);
-            $stmt->bindValue(':user_ip', $userIp, SQLITE3_TEXT);
-            $stmt->execute();
+            $query = 'INSERT INTO votes (implementation_id, user_ip) VALUES (:impl_id, :user_ip)';
+            $params = [
+                ':impl_id' => $implementationId,
+                ':user_ip' => $userIp
+            ];
+            $this->executeQuery($query, $params);
             
             // Update vote count
-            $stmt = $this->db->prepare('UPDATE implementations SET votes = votes + 1 WHERE id = :impl_id');
-            $stmt->bindValue(':impl_id', $implementationId, SQLITE3_INTEGER);
-            $stmt->execute();
+            $query = 'UPDATE implementations SET votes = votes + 1 WHERE id = :impl_id';
+            $params = [':impl_id' => $implementationId];
+            $this->executeQuery($query, $params);
             
             $this->db->exec('COMMIT');
             return ['success' => true];
@@ -242,9 +263,8 @@ class Database {
     public function getRecentlyAddedImplementations($limit = 6) {
         try {
             $query = "SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
-            $result = $stmt->execute();
+            $params = [':limit' => $limit];
+            $result = $this->executeQuery($query, $params);
             
             if ($result === false) {
                 error_log("Database error: Failed to fetch recent implementations");
@@ -265,9 +285,9 @@ class Database {
 
     public function getImplementationByUrl($url) {
         try {
-            $stmt = $this->db->prepare('SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1');
-            $stmt->bindValue(':url', $url, SQLITE3_TEXT);
-            $result = $stmt->execute();
+            $query = 'SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1';
+            $params = [':url' => $url];
+            $result = $this->executeQuery($query, $params);
             $row = $result->fetchArray(SQLITE3_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {
@@ -278,14 +298,14 @@ class Database {
 
     public function getRecentImplementations($limit = 5) {
         try {
-            $stmt = $this->db->prepare('
+            $query = '
                 SELECT * FROM implementations 
                 WHERE is_draft = 0 
                 ORDER BY created_at DESC 
                 LIMIT :limit
-            ');
-            $stmt->bindValue(':limit', $limit, SQLITE3_INTEGER);
-            $result = $stmt->execute();
+            ';
+            $params = [':limit' => $limit];
+            $result = $this->executeQuery($query, $params);
             return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
         } catch (Exception $e) {
             error_log("Database error: " . $e->getMessage());

@@ -1,3 +1,31 @@
+<?php
+require_once __DIR__ . '/../../includes/environment.php';
+require_once __DIR__ . '/../../includes/admin_auth.php';
+
+// If already logged in, redirect to metrics
+if (isAdminAuthenticated()) {
+    header('Location: /admin/metrics.php');
+    exit;
+}
+
+$error = null;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    if (validateAdminCredentials($username, $password)) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['admin_authenticated'] = true;
+        header('Location: /admin/metrics.php');
+        exit;
+    } else {
+        $error = 'Invalid username or password';
+    }
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,7 +86,7 @@
 <body>
     <div class="login-container">
         <h1>Admin Login</h1>
-        <?php if (isset($error)) echo '<div class="error">' . htmlspecialchars($error) . '</div>'; ?>
+        <?php if ($error) echo '<div class="error">' . htmlspecialchars($error) . '</div>'; ?>
         <form method="POST">
             <div class="form-group">
                 <label for="username">Username</label>

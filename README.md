@@ -1,19 +1,36 @@
 # llms.txt Directory
 
-A directory of AI-friendly documentation implementations using the llms.txt standard.
+A directory of AI-friendly documentation implementations using the llms.txt standard. This project aims to showcase and catalog various implementations of the llms.txt specification, making it easier for developers to discover and implement AI-friendly documentation.
 
-## Local Development
+## Features
+
+- Browse llms.txt implementations
+- Search by name, type, or features
+- View implementation details and statistics
+- Vote for useful implementations
+- Submit new implementations
+
+## Getting Started
+
+### As a User
+
+1. Visit [llmstxt.directory](https://llmstxt.directory)
+2. Browse available implementations
+3. Vote for useful implementations
+4. Submit new implementations through the form
+
+### As a Developer
 
 1. Clone the repository:
 ```bash
-git clone git@github.com:yourusername/llmstxtdirectory.git
+git clone https://github.com/yourusername/llmstxtdirectory.git
 cd llmstxtdirectory
 ```
 
 2. Set up environment:
 ```bash
 cp .env.example .env
-# Edit .env with your local settings
+# Edit .env with your settings
 ```
 
 3. Initialize database:
@@ -21,81 +38,44 @@ cp .env.example .env
 php db/init.php
 ```
 
-4. Set up Herd:
-```bash
-# Ensure .herd/config.json points to your local path
-```
+## Contributing
 
-## Deployment
+We welcome contributions! Here's how you can help:
 
-1. Push changes to the `staging` branch for testing
-2. Once tested, merge to `production` branch for production deployment
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## Branches
+### Development Guidelines
 
-- `staging`: Development branch, deploys to staging
-- `production`: Production branch, deploys to production
+- Follow PHP PSR-12 coding standards
+- Write meaningful commit messages
+- Update documentation as needed
+- Test thoroughly before submitting
 
-## Development Workflow
-
-1. Clone the repository and checkout staging branch:
-```bash
-git clone https://github.com/screenfluent/llmstxtdirectory.git
-cd llmstxtdirectory
-git checkout staging
-git pull origin staging
-```
-
-2. Make your changes and commit them:
-```bash
-git add .
-git commit -m "Your commit message"
-```
-
-3. Push to staging:
-```bash
-git checkout staging
-git pull origin staging
-git push origin staging
-```
-
-4. After testing on staging, merge to production:
-```bash
-git checkout production
-git pull origin production
-git merge staging
-git push origin production
-```
-
-## Directory Structure
+## Project Structure
 
 ```
 llmstxtdirectory/
-├── .herd/              # Herd configuration
-├── db/                 # Database files
+├── db/                 # Database management
 ├── includes/           # PHP includes
 ├── public/            # Web root
-│   ├── admin/        # Admin interface
-│   ├── logos/        # Logo storage
+│   ├── logos/        # Implementation logos
 │   └── index.php     # Main entry point
 └── storage/          # Application storage
-    └── logs/         # Log files
 ```
-
-## Security
-
-- Never commit `.env` file
-- Never commit database files
-- Keep admin credentials secure
-- Always use HTTPS
-- Regular security updates
-
-## Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Submit pull request
 
 ## License
 
-[Your License]
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contact
+
+Project Link: [https://github.com/yourusername/llmstxtdirectory](https://github.com/yourusername/llmstxtdirectory)
+
+## Acknowledgments
+
+- All contributors who have helped build and maintain this project
+- The llms.txt specification creators and community
