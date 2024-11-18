@@ -28,19 +28,46 @@ if (!function_exists('env')) {
     }
 }
 
-if (!function_exists('isProduction')) {
-    function isProduction() {
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        if ($host === 'llmstxt.directory') {
+if (!function_exists('isSecure')) {
+    function isSecure() {
+        // Check for Cloudflare HTTPS
+        if (isset($_SERVER['HTTP_CF_VISITOR'])) {
+            $visitor = json_decode($_SERVER['HTTP_CF_VISITOR'], true);
+            if (isset($visitor['scheme']) && $visitor['scheme'] === 'https') {
+                return true;
+            }
+        }
+        
+        // Check standard HTTPS
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
             return true;
         }
-        return env('APP_ENV') === 'production';
+        
+        // Check forwarded proto
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            return true;
+        }
+        
+        return false;
+    }
+}
+
+if (!function_exists('getHost')) {
+    function getHost() {
+        return $_SERVER['HTTP_HOST'] ?? 'localhost';
+    }
+}
+
+if (!function_exists('isProduction')) {
+    function isProduction() {
+        $host = getHost();
+        return $host === 'llmstxt.directory';
     }
 }
 
 if (!function_exists('isDebug')) {
     function isDebug() {
-        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $host = getHost();
         if ($host === 'llmstxt.directory' || $host === 'staging.llmstxt.directory') {
             return false;
         }
@@ -50,7 +77,7 @@ if (!function_exists('isDebug')) {
 
 if (!function_exists('isStaging')) {
     function isStaging() {
-        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $host = getHost();
         return $host === 'staging.llmstxt.directory';
     }
 }
