@@ -2,11 +2,70 @@
 require_once __DIR__ . '/../includes/monitoring.php';
 
 class Database {
-    private $db;
+    protected $db;
 
     public function __construct() {
         $this->db = new SQLite3(__DIR__ . '/votes.db');
         $this->db->enableExceptions(true);
+    }
+
+    public function executeRawSQL($sql) {
+        try {
+            return $this->db->exec($sql);
+        } catch (Exception $e) {
+            logError('Database error executing raw SQL: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function initializeDatabase() {
+        try {
+            // Create implementations table
+            $this->executeRawSQL('
+                CREATE TABLE IF NOT EXISTS implementations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    description TEXT,
+                    llms_txt_url TEXT UNIQUE NOT NULL,
+                    logo_url TEXT,
+                    has_full INTEGER DEFAULT 0,
+                    is_featured INTEGER DEFAULT 0,
+                    is_draft INTEGER DEFAULT 0,
+                    is_requested INTEGER DEFAULT 0,
+                    votes INTEGER DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ');
+
+            // Add sample data if table is empty
+            $result = $this->executeQuery('SELECT COUNT(*) as count FROM implementations');
+            $count = $result->fetchArray(SQLITE3_ASSOC)['count'];
+
+            if ($count === 0) {
+                $sampleData = [
+                    [
+                        'name' => 'Example Implementation',
+                        'description' => 'This is a sample implementation of llms.txt',
+                        'llms_txt_url' => 'https://example.com/llms.txt',
+                        'logo_url' => '/logos/example.png',
+                        'has_full' => 1,
+                        'is_featured' => 1,
+                        'votes' => 10
+                    ],
+                    // Add more sample entries as needed
+                ];
+
+                foreach ($sampleData as $data) {
+                    $this->addImplementation($data);
+                }
+            }
+
+            return true;
+        } catch (Exception $e) {
+            logError('Database initialization error: ' . $e->getMessage());
+            return false;
+        }
     }
 
     private function executeQuery($query, $params = []) {
