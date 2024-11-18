@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$implementations = $db->getImplementations();
+$implementations = $db->getImplementations(true); // Pass true to show all implementations including drafts
 ?>
 <!DOCTYPE html>
 <html>

@@ -95,11 +95,11 @@ class Database {
         }
     }
 
-    public function getImplementations() {
+    public function getImplementations($isAdmin = false) {
         try {
             $query = '
                 SELECT * FROM implementations 
-                WHERE is_draft = 0 
+                ' . ($isAdmin ? '' : 'WHERE is_draft = 0') . '
                 ORDER BY is_featured DESC, name ASC
             ';
             $result = $this->executeQuery($query);
@@ -109,17 +109,15 @@ class Database {
             }
             return $implementations;
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            logError('Failed to get implementations: ' . $e->getMessage());
             return [];
         }
     }
 
     public function addImplementation($data) {
         try {
-            // Check if implementation with this URL already exists
-            $existing = $this->getImplementationByUrl($data['llms_txt_url']);
-            if ($existing) {
-                error_log("Implementation with URL {$data['llms_txt_url']} already exists");
+            // Check if URL already exists
+            if ($this->isUrlTaken($data['llms_txt_url'])) {
                 return false;
             }
 
@@ -168,6 +166,11 @@ class Database {
 
     public function updateImplementation($id, $data) {
         try {
+            // Check if URL is taken by another implementation
+            if ($this->isUrlTaken($data['llms_txt_url'], $id)) {
+                return false;
+            }
+
             $fields = [];
             $values = [];
             
@@ -369,6 +372,25 @@ class Database {
         } catch (Exception $e) {
             error_log("Database error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    public function isUrlTaken($url, $excludeId = null) {
+        try {
+            $query = 'SELECT id FROM implementations WHERE llms_txt_url = :url';
+            $params = [':url' => $url];
+            
+            if ($excludeId !== null) {
+                $query .= ' AND id != :id';
+                $params[':id'] = $excludeId;
+            }
+            
+            $result = $this->executeQuery($query, $params);
+            $row = $result->fetchArray(SQLITE3_ASSOC);
+            return $row !== false;
+        } catch (Exception $e) {
+            logError('Failed to check URL existence: ' . $e->getMessage());
+            return false;
         }
     }
 }
