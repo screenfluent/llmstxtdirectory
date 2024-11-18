@@ -1,0 +1,60 @@
+{
+  "environments": {
+    "production": {
+      "domain": "llmstxt.directory",
+      "branch": "production",
+      "server": {
+        "type": "forge",
+        "php_version": "8.2",
+        "webserver": "nginx"
+      },
+      "deployment": {
+        "strategy": "zero_downtime",
+        "database": {
+          "preserve_data": true,
+          "schema_updates": "transactional"
+        },
+        "permissions": {
+          "user": "llmstxtdirectory",
+          "group": "www-data",
+          "files": "644",
+          "directories": "755"
+        }
+      }
+    },
+    "staging": {
+      "domain": "staging.llmstxt.directory",
+      "branch": "staging",
+      "server": {
+        "type": "forge",
+        "php_version": "8.2",
+        "webserver": "nginx"
+      },
+      "deployment": {
+        "strategy": "recreate",
+        "database": {
+          "preserve_data": false,
+          "recreate": true,
+          "sample_data": true
+        },
+        "permissions": {
+          "user": "stagingllmstxtdirectory",
+          "group": "www-data",
+          "files": "644",
+          "directories": "755"
+        }
+      }
+    }
+  },
+  "shared_resources": {
+    "directories": [
+      "public/logos"
+    ],
+    "permissions": {
+      "logos": {
+        "mode": "775",
+        "owner": "llmstxtdirectory:www-data"
+      }
+    }
+  }
+}
