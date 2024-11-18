@@ -4,11 +4,16 @@
     "type": "project",
     "require": {
         "php": "^8.1",
-        "ext-sqlite3": "*"
+        "ext-sqlite3": "*",
+        "ext-gd": "*",
+        "ext-fileinfo": "*"
     },
     "autoload": {
         "files": [
             "includes/helpers.php"
+        ],
+        "classmap": [
+            "includes/"
         ]
     },
     "config": {
