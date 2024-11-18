@@ -6,14 +6,15 @@ require_once __DIR__ . '/../includes/environment.php';
 require_once __DIR__ . '/database.php';
 
 try {
-    echo "Initializing database...\n";
+    logPerformanceMetric('database_init', 'start');
     
     $db = new Database();
 
     // In staging, always recreate the database
     if (!isProduction()) {
-        echo "Recreating database in staging environment...\n";
+        logPerformanceMetric('database_init', 'recreate_start');
         $db->recreateDatabase();
+        logPerformanceMetric('database_init', 'recreate_end');
     }
     
     // Read schema
@@ -23,14 +24,15 @@ try {
     }
     
     // Execute schema
-    echo "Applying database schema...\n";
+    logPerformanceMetric('database_init', 'schema_start');
     if ($db->executeRawSQL($schema) === false) {
         throw new Exception("Failed to execute schema");
     }
+    logPerformanceMetric('database_init', 'schema_end');
 
     // In staging, always add sample data
     if (!isProduction()) {
-        echo "Adding sample data for staging environment...\n";
+        logPerformanceMetric('database_init', 'sample_data_start');
         
         // Sample implementations
         $implementations = [
@@ -82,18 +84,19 @@ try {
 
         foreach ($implementations as $impl) {
             if ($db->addImplementation($impl)) {
-                echo "Added implementation: {$impl['name']}\n";
+                logPerformanceMetric('database_init', 'add_implementation', ['name' => $impl['name']]);
             } else {
-                echo "Failed to add implementation: {$impl['name']}\n";
+                logError('Failed to add implementation', ['name' => $impl['name']]);
             }
         }
+        logPerformanceMetric('database_init', 'sample_data_end');
     } else {
         // In production, only add sample data if database is empty
         $result = $db->executeQuery('SELECT COUNT(*) as count FROM implementations');
         $count = $result->fetchArray(SQLITE3_ASSOC)['count'];
 
         if ($count === 0) {
-            echo "Adding sample data to empty production database...\n";
+            logPerformanceMetric('database_init', 'production_sample_data_start');
             // Add only verified implementations in production
             $implementations = [
                 [
@@ -111,16 +114,20 @@ try {
 
             foreach ($implementations as $impl) {
                 if ($db->addImplementation($impl)) {
-                    echo "Added implementation: {$impl['name']}\n";
+                    logPerformanceMetric('database_init', 'add_implementation', ['name' => $impl['name']]);
                 } else {
-                    echo "Failed to add implementation: {$impl['name']}\n";
+                    logError('Failed to add implementation', ['name' => $impl['name']]);
                 }
             }
+            logPerformanceMetric('database_init', 'production_sample_data_end');
         }
     }
 
-    echo "Database initialization completed successfully!\n";
+    logPerformanceMetric('database_init', 'complete');
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+    logError('Database initialization failed', [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+    ]);
     exit(1);
 }

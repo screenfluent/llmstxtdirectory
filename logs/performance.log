@@ -1645,3 +1645,250 @@
 {"timestamp":"2024-11-18 12:04:30","metric":"db_query_duration","value":0.018835067749023438,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
 {"timestamp":"2024-11-18 12:04:30","metric":"request_duration","value":1.5761852264404297,"tags":{"route":"\/"},"environment":"staging"}
 {"timestamp":"2024-11-18 12:04:30","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":3.6530494689941406,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.09703636169433594,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.05888938903808594,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.023126602172851562,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.014066696166992188,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.04601478576660156,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.07915496826171875,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.1499652862548828,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.20313262939453125,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"request_duration","value":23.721933364868164,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.6439685821533203,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.011920928955078125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.2429485321044922,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.04696846008300781,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.017881393432617188,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.09083747863769531,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.04291534423828125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.012159347534179688,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.009059906005859375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.010013580322265625,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.05698204040527344,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.09322166442871094,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.029087066650390625,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.025987625122070312,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.11205673217773438,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.064849853515625,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"request_duration","value":11.703968048095703,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.06985664367675781,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"request_duration","value":11.008977890014648,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.4909038543701172,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.03790855407714844,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.06794929504394531,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.029802322387695312,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.028133392333984375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.02193450927734375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.0171661376953125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.03790855407714844,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.019788742065429688,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"request_duration","value":1.661062240600586,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.8699893951416016,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.03409385681152344,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.019073486328125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.02288818359375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.06985664367675781,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.015020370483398438,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.008106231689453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.030040740966796875,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"db_query_duration","value":0.051021575927734375,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"request_duration","value":5.800008773803711,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:44","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:52","metric":"db_query_duration","value":1.0941028594970703,"tags":{"query":"SELECT id FROM implementations WHERE llms_txt_url = :url AND id != :id"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:52","metric":"db_query_duration","value":1.216888427734375,"tags":{"query":"UPDATE implementations SET name = :name, description = :description, llms_txt_url = :llms_txt_url, h"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:52","metric":"db_query_duration","value":0.09393692016601562,"tags":{"query":"\n                SELECT * FROM implementations \n                \n                ORDER BY is_feature"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:52","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:58","metric":"db_query_duration","value":0.5879402160644531,"tags":{"query":"\n                SELECT * FROM implementations \n                \n                ORDER BY is_feature"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:28:58","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:29:03","metric":"db_query_duration","value":0.7848739624023438,"tags":{"query":"DELETE FROM votes WHERE implementation_id = :id"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:29:03","metric":"db_query_duration","value":0.286102294921875,"tags":{"query":"DELETE FROM implementations WHERE id = :id"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:29:03","metric":"db_query_duration","value":0.06508827209472656,"tags":{"query":"\n                SELECT * FROM implementations \n                \n                ORDER BY is_feature"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:29:03","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:39","metric":"db_query_duration","value":0.33283233642578125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:39","metric":"db_query_duration","value":0.013113021850585938,"tags":{"query":"SELECT id FROM implementations WHERE llms_txt_url = :url"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:39","metric":"db_query_duration","value":2.2530555725097656,"tags":{"query":"\n                INSERT INTO implementations (\n                    name, logo_url, description, llms"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:39","metric":"db_query_duration","value":0.0438690185546875,"tags":{"query":"\n                SELECT * FROM implementations \n                \n                ORDER BY is_feature"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:39","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:55","metric":"db_query_duration","value":0.20503997802734375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:55","metric":"db_query_duration","value":0.04982948303222656,"tags":{"query":"\n                SELECT * FROM implementations \n                \n                ORDER BY is_feature"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:31:55","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":1.2001991271972656,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.027179718017578125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02288818359375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.019788742065429688,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.06103515625,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.025987625122070312,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"request_duration","value":3.025054931640625,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.6690025329589844,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02193450927734375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.017881393432617188,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.015974044799804688,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.015020370483398438,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.01621246337890625,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.015020370483398438,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.05817413330078125,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.1239776611328125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.031948089599609375,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.017881393432617188,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"request_duration","value":3.757953643798828,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.0171661376953125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.015020370483398438,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.015020370483398438,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.015020370483398438,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.029087066650390625,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"request_duration","value":1.2028217315673828,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.4420280456542969,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.027894973754882812,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02193450927734375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.021219253540039062,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.041961669921875,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.09703636169433594,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"request_duration","value":8.414983749389648,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.42700767517089844,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.03504753112792969,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.02384185791015625,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.05888938903808594,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.09989738464355469,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.016927719116210938,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.015974044799804688,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.048160552978515625,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"db_query_duration","value":0.023126602172851562,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"request_duration","value":3.731966018676758,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:00","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:17","metric":"db_query_duration","value":0.2529621124267578,"tags":{"query":"SELECT id FROM implementations WHERE llms_txt_url = :url AND id != :id"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:17","metric":"db_query_duration","value":0.9009838104248047,"tags":{"query":"UPDATE implementations SET name = :name, description = :description, llms_txt_url = :llms_txt_url, h"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:17","metric":"db_query_duration","value":0.07414817810058594,"tags":{"query":"\n                SELECT * FROM implementations \n                \n                ORDER BY is_feature"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:17","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.2880096435546875,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.028848648071289062,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.019073486328125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.016927719116210938,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.015974044799804688,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.015974044799804688,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.034809112548828125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.050067901611328125,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.053882598876953125,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"request_duration","value":2.321004867553711,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.8080005645751953,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.053882598876953125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.025033950805664062,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.02288818359375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.028848648071289062,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.06008148193359375,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.1690387725830078,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.019073486328125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.016927719116210938,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.016927719116210938,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.01811981201171875,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.014066696166992188,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.03409385681152344,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.09012222290039062,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.05888938903808594,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"request_duration","value":7.89189338684082,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"request_duration","value":2.6590824127197266,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.28014183044433594,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.028133392333984375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.0400543212890625,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.03695487976074219,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.010013580322265625,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.008106231689453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.007867813110351562,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.03409385681152344,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.03409385681152344,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"request_duration","value":3.599882125854492,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.6210803985595703,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.010013580322265625,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.009059906005859375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.0069141387939453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.0069141387939453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.0069141387939453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.0069141387939453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"db_query_duration","value":0.015020370483398438,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"request_duration","value":4.760980606079102,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:20","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:46","metric":"db_query_duration","value":0.5841255187988281,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:46","metric":"db_query_duration","value":0.0629425048828125,"tags":{"query":"SELECT id FROM implementations WHERE llms_txt_url = :url"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:46","metric":"db_query_duration","value":1.8260478973388672,"tags":{"query":"\n                INSERT INTO implementations (\n                    name, logo_url, description, llms"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:46","metric":"db_query_duration","value":0.1289844512939453,"tags":{"query":"\n                SELECT * FROM implementations \n                \n                ORDER BY is_feature"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:46","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.6098747253417969,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.030040740966796875,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.019073486328125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.019073486328125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.017881393432617188,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.04696846008300781,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.07700920104980469,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.030994415283203125,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"request_duration","value":2.299070358276367,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.1919269561767578,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.04291534423828125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.03600120544433594,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.023126602172851562,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.025033950805664062,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.12612342834472656,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.029802322387695312,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.01811981201171875,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.01811981201171875,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.04792213439941406,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.03600120544433594,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.07104873657226562,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"request_duration","value":1.873016357421875,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.024080276489257812,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.02193450927734375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.0209808349609375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.051975250244140625,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.03409385681152344,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"request_duration","value":1.8978118896484375,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.3380775451660156,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.04220008850097656,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.024080276489257812,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.02002716064453125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.026941299438476562,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.02288818359375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.016927719116210938,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.0400543212890625,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.0820159912109375,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"request_duration","value":4.260063171386719,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.42319297790527344,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.11610984802246094,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.025033950805664062,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.0171661376953125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.02193450927734375,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.050067901611328125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.011920928955078125,"tags":{"query":"SELECT * FROM implementations WHERE llms_txt_url = :url LIMIT 1"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.0629425048828125,"tags":{"query":"\n                SELECT * FROM implementations \n                WHERE is_featured = 1 AND is_draft ="},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"db_query_duration","value":0.012159347534179688,"tags":{"query":"SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"request_duration","value":2.1209716796875,"tags":{"route":"\/"},"environment":"staging"}
+{"timestamp":"2024-11-18 12:32:56","metric":"memory_peak","value":2097152,"tags":[],"environment":"staging"}

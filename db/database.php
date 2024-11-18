@@ -11,31 +11,38 @@ class Database {
     }
 
     private function connect() {
-        $this->db = new SQLite3($this->dbPath);
-        $this->db->enableExceptions(true);
+        try {
+            $this->db = new SQLite3($this->dbPath);
+            $this->db->enableExceptions(true);
+        } catch (Exception $e) {
+            logError('Failed to connect to database', [
+                'path' => $this->dbPath,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     public function recreateDatabase() {
-        // Close existing connection
-        if ($this->db) {
-            $this->db->close();
-        }
-
-        // Delete existing database file
-        if (file_exists($this->dbPath)) {
-            unlink($this->dbPath);
-        }
-
-        // Reconnect to create new database
-        $this->connect();
-        return true;
-    }
-
-    public function executeRawSQL($sql) {
         try {
-            return $this->db->exec($sql);
+            // Close existing connection
+            if ($this->db) {
+                $this->db->close();
+            }
+
+            // Delete existing database file
+            if (file_exists($this->dbPath)) {
+                unlink($this->dbPath);
+            }
+
+            // Reconnect to create new database
+            $this->connect();
+            return true;
         } catch (Exception $e) {
-            logError('Database error executing raw SQL: ' . $e->getMessage());
+            logError('Failed to recreate database', [
+                'path' => $this->dbPath,
+                'error' => $e->getMessage()
+            ]);
             throw $e;
         }
     }
@@ -85,8 +92,22 @@ class Database {
 
             return true;
         } catch (Exception $e) {
-            logError('Database initialization error: ' . $e->getMessage());
-            return false;
+            logError('Database initialization error', [
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
+
+    public function executeRawSQL($sql) {
+        try {
+            return $this->db->exec($sql);
+        } catch (Exception $e) {
+            logError('Database error executing raw SQL', [
+                'sql' => $sql,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
         }
     }
 
@@ -109,9 +130,10 @@ class Database {
             
             return $result;
         } catch (Exception $e) {
-            logError('Database error: ' . $e->getMessage(), [
+            logError('Database error', [
                 'query' => $query,
-                'params' => $params
+                'params' => $params,
+                'error' => $e->getMessage()
             ]);
             throw $e;
         }
@@ -131,7 +153,9 @@ class Database {
             }
             return $implementations;
         } catch (Exception $e) {
-            logError('Failed to get implementations: ' . $e->getMessage());
+            logError('Failed to get implementations', [
+                'error' => $e->getMessage()
+            ]);
             return [];
         }
     }
@@ -181,7 +205,10 @@ class Database {
             ];
             return $this->executeQuery($query, $params);
         } catch (Exception $e) {
-            error_log("Failed to add implementation: " . $e->getMessage());
+            logError('Failed to add implementation', [
+                'data' => $data,
+                'error' => $e->getMessage()
+            ]);
             throw $e;
         }
     }
@@ -222,7 +249,11 @@ class Database {
             $query = "UPDATE implementations SET " . implode(', ', $fields) . " WHERE id = :id";
             return $this->executeQuery($query, $values);
         } catch (Exception $e) {
-            error_log("Failed to update implementation: " . $e->getMessage());
+            logError('Failed to update implementation', [
+                'id' => $id,
+                'data' => $data,
+                'error' => $e->getMessage()
+            ]);
             throw $e;
         }
     }
@@ -241,7 +272,9 @@ class Database {
             }
             return $implementations;
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            logError('Failed to get featured implementations', [
+                'error' => $e->getMessage()
+            ]);
             return [];
         }
     }
@@ -256,7 +289,9 @@ class Database {
             $result = $this->executeQuery($query);
             return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            logError('Failed to get requested implementations', [
+                'error' => $e->getMessage()
+            ]);
             return [];
         }
     }
@@ -268,13 +303,18 @@ class Database {
             $result = $this->executeQuery($query, $params);
             
             if ($result === false) {
-                error_log("Database error: Failed to fetch implementation by ID");
+                logError('Failed to fetch implementation by ID', [
+                    'id' => $id
+                ]);
                 return null;
             }
             
             return $result->fetchArray(SQLITE3_ASSOC);
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            logError('Failed to get implementation by ID', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
             return null;
         }
     }
@@ -299,7 +339,10 @@ class Database {
             return true;
         } catch (Exception $e) {
             $this->db->exec('ROLLBACK');
-            error_log("Failed to delete implementation: " . $e->getMessage());
+            logError('Failed to delete implementation', [
+                'id' => $id,
+                'error' => $e->getMessage()
+            ]);
             return false;
         }
     }
@@ -340,6 +383,11 @@ class Database {
             return ['success' => true];
         } catch (Exception $e) {
             $this->db->exec('ROLLBACK');
+            logError('Failed to add vote', [
+                'implementationId' => $implementationId,
+                'userIp' => $userIp,
+                'error' => $e->getMessage()
+            ]);
             return ['error' => $e->getMessage()];
         }
     }
@@ -351,7 +399,9 @@ class Database {
             $result = $this->executeQuery($query, $params);
             
             if ($result === false) {
-                error_log("Database error: Failed to fetch recent implementations");
+                logError('Failed to fetch recent implementations', [
+                    'limit' => $limit
+                ]);
                 return [];
             }
             
@@ -362,7 +412,10 @@ class Database {
             
             return $implementations;
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            logError('Failed to get recent implementations', [
+                'limit' => $limit,
+                'error' => $e->getMessage()
+            ]);
             return [];
         }
     }
@@ -375,7 +428,10 @@ class Database {
             $row = $result->fetchArray(SQLITE3_ASSOC);
             return $row ?: null;
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            logError('Failed to get implementation by URL', [
+                'url' => $url,
+                'error' => $e->getMessage()
+            ]);
             return null;
         }
     }
@@ -392,7 +448,10 @@ class Database {
             $result = $this->executeQuery($query, $params);
             return $result->fetchArray(SQLITE3_ASSOC) ? $result : [];
         } catch (Exception $e) {
-            error_log("Database error: " . $e->getMessage());
+            logError('Failed to get recent implementations', [
+                'limit' => $limit,
+                'error' => $e->getMessage()
+            ]);
             return [];
         }
     }
@@ -411,7 +470,11 @@ class Database {
             $row = $result->fetchArray(SQLITE3_ASSOC);
             return $row !== false;
         } catch (Exception $e) {
-            logError('Failed to check URL existence: ' . $e->getMessage());
+            logError('Failed to check URL existence', [
+                'url' => $url,
+                'excludeId' => $excludeId,
+                'error' => $e->getMessage()
+            ]);
             return false;
         }
     }
