@@ -9,10 +9,9 @@ git config --global --add safe.directory /home/stagingllmstxtdirectory/staging.l
 # Update repository
 cd /home/stagingllmstxtdirectory/staging.llmstxt.directory
 
-# Initial git setup
-git fetch --all
-git checkout -f staging
-git pull origin staging
+# Initial git setup - more resilient approach
+git fetch --all --prune
+git reset --hard origin/staging  # Force align with remote staging branch
 
 # Set permissions
 chown -R stagingllmstxtdirectory:stagingllmstxtdirectory .
