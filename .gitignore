@@ -1,23 +1,31 @@
+# Dependencies
 /vendor/
+
+# Environment files
 .env
 .env.backup
-.phpunit.result.cache
-docker-compose.override.yml
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
+
+# IDE
 /.idea
 /.vscode
-/storage/*.key
-/storage/logs/*
-!/storage/logs/.gitkeep
-/public/logos/*
-!/public/logos/default.svg
 .DS_Store
+
+# Testing
+.phpunit.result.cache
+
+# Database
 *.sqlite
 *.sqlite3
 *.db
 /db/*.db
-/db/*.sqlite
-/db/*.sqlite3
+
+# Logs and storage
+/logs/*
+!/logs/.gitkeep
+
+# Documentation
+/.cascade/
+
+# User uploads
+/public/logos/*
+!/public/logos/default.svg

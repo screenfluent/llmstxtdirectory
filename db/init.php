@@ -2,30 +2,37 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+require_once __DIR__ . '/../includes/environment.php';
 require_once __DIR__ . '/database.php';
 
 try {
-    // Read and execute schema
+    logPerformanceMetric('database_init', 'start');
+    
+    $db = new Database();
+
+    // In staging, always recreate the database
+    if (!isProduction()) {
+        logPerformanceMetric('database_init', 'recreate_start');
+        $db->recreateDatabase();
+        logPerformanceMetric('database_init', 'recreate_end');
+    }
+    
+    // Read schema
     $schema = file_get_contents(__DIR__ . '/schema.sql');
     if ($schema === false) {
         throw new Exception("Could not read schema.sql");
     }
-
-    $db = new Database();
     
-    // Always apply schema (handles both new and existing databases)
-    $result = $db->db->exec($schema);
-    if ($result === false) {
-        throw new Exception("Failed to execute schema: " . $db->db->lastErrorMsg());
+    // Execute schema
+    logPerformanceMetric('database_init', 'schema_start');
+    if ($db->executeRawSQL($schema) === false) {
+        throw new Exception("Failed to execute schema");
     }
+    logPerformanceMetric('database_init', 'schema_end');
 
-    // Only add sample data if no implementations exist
-    $stmt = $db->db->prepare('SELECT COUNT(*) as count FROM implementations');
-    $result = $stmt->execute();
-    $count = $result->fetchArray(SQLITE3_ASSOC)['count'];
-
-    if ($count === 0) {
-        echo "Adding sample data...\n";
+    // In staging, always add sample data
+    if (!isProduction()) {
+        logPerformanceMetric('database_init', 'sample_data_start');
         
         // Sample implementations
         $implementations = [
@@ -49,12 +56,8 @@ try {
                 'is_featured' => 1,
                 'is_requested' => 0,
                 'is_draft' => 0,
-                'votes' => 25
-            ]
-        ];
-
-        // Requested implementations
-        $requested = [
+                'votes' => 12
+            ],
             [
                 'name' => 'Vercel',
                 'logo_url' => '/logos/vercel.png',
@@ -79,18 +82,52 @@ try {
             ]
         ];
 
-        // Insert all implementations
-        foreach (array_merge($implementations, $requested) as $impl) {
-            if (!$db->addImplementation($impl)) {
-                error_log("Failed to add implementation: {$impl['name']}");
+        foreach ($implementations as $impl) {
+            if ($db->addImplementation($impl)) {
+                logPerformanceMetric('database_init', 'add_implementation', ['name' => $impl['name']]);
+            } else {
+                logError('Failed to add implementation', ['name' => $impl['name']]);
             }
         }
+        logPerformanceMetric('database_init', 'sample_data_end');
     } else {
-        echo "Database already contains data, skipping sample data.\n";
+        // In production, only add sample data if database is empty
+        $result = $db->executeQuery('SELECT COUNT(*) as count FROM implementations');
+        $count = $result->fetchArray(SQLITE3_ASSOC)['count'];
+
+        if ($count === 0) {
+            logPerformanceMetric('database_init', 'production_sample_data_start');
+            // Add only verified implementations in production
+            $implementations = [
+                [
+                    'name' => 'Superwall',
+                    'logo_url' => '/logos/superwall.svg',
+                    'description' => 'Paywall infrastructure for mobile apps',
+                    'llms_txt_url' => 'https://docs.superwall.com/llms.txt',
+                    'has_full' => 1,
+                    'is_featured' => 1,
+                    'is_requested' => 0,
+                    'is_draft' => 0,
+                    'votes' => 15
+                ]
+            ];
+
+            foreach ($implementations as $impl) {
+                if ($db->addImplementation($impl)) {
+                    logPerformanceMetric('database_init', 'add_implementation', ['name' => $impl['name']]);
+                } else {
+                    logError('Failed to add implementation', ['name' => $impl['name']]);
+                }
+            }
+            logPerformanceMetric('database_init', 'production_sample_data_end');
+        }
     }
 
-    echo "Database initialization/update completed successfully.\n";
+    logPerformanceMetric('database_init', 'complete');
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
+    logError('Database initialization failed', [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+    ]);
     exit(1);
 }
