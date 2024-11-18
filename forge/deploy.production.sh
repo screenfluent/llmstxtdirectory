@@ -25,15 +25,36 @@ chmod -R 775 public/logos
 mkdir -p db
 chmod 755 db
 
-# Remove existing database to force recreation with new schema
-rm -f db/votes.db
-touch db/votes.db
-chown llmstxtdirectory:www-data db/votes.db
-chmod 664 db/votes.db
-
-# Initialize database with new schema
-echo "Initializing database with new schema..."
-php db/init.php
+# Database handling
+if [ ! -f "db/votes.db" ]; then
+    # Only create new database if it doesn't exist
+    echo "Creating new database..."
+    touch db/votes.db
+    chown llmstxtdirectory:www-data db/votes.db
+    chmod 664 db/votes.db
+    
+    # Initialize with schema and sample data
+    echo "Initializing database with schema and sample data..."
+    php db/init.php
+else
+    # Database exists, just update schema
+    echo "Updating existing database schema..."
+    php -r "
+        require_once 'db/database.php';
+        \$db = new Database();
+        \$schema = file_get_contents('db/schema.sql');
+        \$db->db->exec('BEGIN TRANSACTION;');
+        try {
+            \$db->db->exec(\$schema);
+            \$db->db->exec('COMMIT;');
+            echo \"Schema updated successfully.\n\";
+        } catch (Exception \$e) {
+            \$db->db->exec('ROLLBACK;');
+            echo \"Error updating schema: \" . \$e->getMessage() . \"\n\";
+            exit(1);
+        }
+    "
+fi
 
 # Set database permissions
 chown llmstxtdirectory:www-data db/votes.db

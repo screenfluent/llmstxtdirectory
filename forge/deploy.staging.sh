@@ -43,6 +43,7 @@ chown stagingllmstxtdirectory:www-data db/votes.db
 chmod 664 db/votes.db
 
 # Restart PHP
-sudo -S service php8.2-fpm restart
+( flock -w 10 9 || exit 1
+    echo 'Restarting FPM...'; sudo -S service $FORGE_PHP_FPM reload ) 9>/tmp/fpmlock
 
 echo "Deployment completed successfully!"
