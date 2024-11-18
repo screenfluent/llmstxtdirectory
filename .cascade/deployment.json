@@ -1,0 +1,69 @@
+{
+  "environments": {
+    "production": {
+      "domain": "llmstxt.directory",
+      "branch": "production",
+      "server": {
+        "type": "forge",
+        "php_version": "8.3",
+        "webserver": "nginx"
+      },
+      "deployment": {
+        "strategy": "zero_downtime",
+        "database": {
+          "preserve_data": true,
+          "schema_updates": "transactional"
+        },
+        "permissions": {
+          "user": "llmstxtdirectory",
+          "group": "www-data",
+          "files": "644",
+          "directories": "755"
+        }
+      },
+      "analytics": {
+        "provider": "Beam Analytics",
+        "token": "93f53d9b-fadc-433a-9c7c-9621ac1ee672",
+        "script": "https://beamanalytics.b-cdn.net/beam.min.js"
+      }
+    },
+    "staging": {
+      "domain": "staging.llmstxt.directory",
+      "branch": "staging",
+      "server": {
+        "type": "forge",
+        "php_version": "8.3",
+        "webserver": "nginx"
+      },
+      "deployment": {
+        "strategy": "recreate",
+        "database": {
+          "preserve_data": false,
+          "recreate": true,
+          "sample_data": true
+        },
+        "permissions": {
+          "user": "stagingllmstxtdirectory",
+          "group": "www-data",
+          "files": "644",
+          "directories": "755"
+        }
+      },
+      "analytics": {
+        "enabled": false,
+        "note": "Analytics disabled in staging environment"
+      }
+    }
+  },
+  "shared_resources": {
+    "directories": [
+      "public/logos"
+    ],
+    "permissions": {
+      "logos": {
+        "mode": "775",
+        "owner": "llmstxtdirectory:www-data"
+      }
+    }
+  }
+}
