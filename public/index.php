@@ -1,4 +1,11 @@
 <?php 
+// Prevent caching for staging
+if (strpos($_SERVER['HTTP_HOST'] ?? '', 'staging.') === 0) {
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+}
+
 require_once __DIR__ . '/../includes/environment.php';
 require_once __DIR__ . '/../includes/monitoring.php';
 $requestStart = startRequestTiming();
