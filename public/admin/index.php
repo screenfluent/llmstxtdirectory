@@ -104,6 +104,8 @@ if (!isset($_SESSION['admin_logged_in'])) {
 }
 
 $db = new Database();
+$message = '';
+$messageType = '';
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -119,6 +121,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'is_draft' => isset($_POST['is_draft']) ? 1 : 0,
                     'is_requested' => isset($_POST['is_requested']) ? 1 : 0
                 ];
+                
+                // Check for duplicate URL before upload handling
+                $existing = $db->getImplementationByUrl($data['llms_txt_url']);
+                if ($existing) {
+                    $message = "An implementation with this llms.txt URL already exists.";
+                    $messageType = 'error';
+                    break;
+                }
                 
                 // Handle logo upload
                 if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
@@ -142,7 +152,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 
-                $db->addImplementation($data);
+                if ($db->addImplementation($data)) {
+                    $message = "Implementation added successfully!";
+                    $messageType = 'success';
+                } else {
+                    $message = "Failed to add implementation. Please try again.";
+                    $messageType = 'error';
+                }
                 break;
                 
             case 'edit':
@@ -178,11 +194,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 
-                $db->updateImplementation($_POST['id'], $data);
+                if ($db->updateImplementation($_POST['id'], $data)) {
+                    $message = "Implementation updated successfully!";
+                    $messageType = 'success';
+                } else {
+                    $message = "Failed to update implementation. Please try again.";
+                    $messageType = 'error';
+                }
                 break;
                 
             case 'delete':
-                $db->deleteImplementation($_POST['id']);
+                if ($db->deleteImplementation($_POST['id'])) {
+                    $message = "Implementation deleted successfully!";
+                    $messageType = 'success';
+                } else {
+                    $message = "Failed to delete implementation. Please try again.";
+                    $messageType = 'error';
+                }
                 break;
         }
     }
@@ -409,6 +437,22 @@ $implementations = $db->getImplementations();
         .actions {
             white-space: nowrap;
         }
+        .message {
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .message.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
     </style>
 </head>
 <body>
@@ -418,6 +462,12 @@ $implementations = $db->getImplementations();
             <button class="add-new" onclick="showAddModal()">Add New</button>
         </div>
         
+        <?php if ($message): ?>
+        <div class="message <?php echo $messageType; ?>">
+            <?php echo htmlspecialchars($message); ?>
+        </div>
+        <?php endif; ?>
+
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -570,6 +620,11 @@ $implementations = $db->getImplementations();
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
         }
+        
+        // Keep modal open if there was an error
+        <?php if ($messageType === 'error' && isset($_POST['action'])): ?>
+        document.getElementById('modal').style.display = 'block';
+        <?php endif; ?>
     </script>
 </body>
 </html>
