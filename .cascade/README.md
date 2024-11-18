@@ -1,62 +1,96 @@
-# .cascade Project Documentation
+# llmstxt.directory Technical Documentation
 
-This directory contains comprehensive documentation and specifications for the llmstxt.directory project.
+## Overview
+llmstxt.directory is a web application for cataloging llms.txt implementations. It features a secure admin interface for managing implementations and a public interface for viewing them.
 
-## File Structure
+## Architecture
 
-- `project.json`: Core project specifications and technical stack
-- `database.json`: Database schema, management policies, and security settings
-- `deployment.json`: Deployment configurations for production and staging
-- `features.json`: Implemented and planned feature specifications
+### Database
+- SQLite3 database (`votes.db`)
+- Environment-aware initialization
+- Automatic recreation in staging
+- Sample data management
+  - Staging: Full set of sample implementations
+  - Production: Minimal verified implementations
 
-## Key Project Characteristics
+### Authentication
+- Environment-based admin credentials
+- Session-based authentication
+- Secure password verification
+- Planned: Two-factor authentication
 
-### Environment Management
-- Production: Data-preserving, zero-downtime deployments
-- Staging: Clean testing environment with sample data
+### Admin Interface
+- Complete CRUD operations
+- Logo upload functionality
+- Toggle controls:
+  - Featured status
+  - Draft mode
+  - Full implementation flag
+- URL uniqueness validation
+- All entries visible in admin panel
 
-### Database Strategy
-- Production: Preserves data, uses transactional schema updates
-- Staging: Fresh database on each deployment
+### Public Interface
+- View non-draft implementations
+- Vote functionality
+- Sort by featured status
+- Performance metrics tracking
 
-### Security Considerations
-- Proper file permissions (644 for files, 755 for directories)
-- Secure database management
-- Input validation and sanitization
+## Environment Configuration
 
-### Development Workflow
-1. Development on staging branch
-2. Testing in staging environment
-3. Merge to production when ready
-4. Zero-downtime production deployments
+### Production
+- `APP_ENV=production`
+- Database preservation
+- Minimal sample data
+- Error logging only
 
-## Project Evolution
+### Staging
+- `APP_ENV=staging`
+- Fresh database on each deploy
+- Full sample data
+- Verbose error reporting
 
-### Completed Features
-- Draft system implementation
-- Logo management
-- URL validation
-- Deployment automation
-- Database management improvements
+## Security Measures
+- Environment-based configuration
+- Secure session management
+- URL uniqueness validation
+- Error logging and monitoring
+- Planned:
+  - Rate limiting
+  - Two-factor authentication
+  - Advanced password hashing
 
-### Planned Features
-- Advanced search functionality
-- User authentication
-- Voting system
+## Development
 
-## Technical Specifications
+### Requirements
+- PHP 8.3+
+- SQLite3
+- Web server (Apache/Nginx)
 
-### Backend
-- PHP 8.3
-- SQLite3 Database
-- Nginx Web Server
-
-### Frontend
-- Vanilla JavaScript
-- HTML5 & CSS3
-- Space Grotesk Font
+### Setup
+1. Clone repository
+2. Copy `.env.example` to `.env`
+3. Set environment variables
+4. Run database initialization
+5. Configure web server
 
 ### Deployment
-- Laravel Forge
-- Production & Staging Environments
-- Automated Deployment Scripts
+- Via Laravel Forge
+- Zero-downtime deployment
+- Automatic database initialization
+- Environment-specific configuration
+
+## File Structure
+```
+/
+├── .cascade/          # Project documentation
+├── db/               # Database files and initialization
+├── includes/         # Core PHP includes
+├── public/           # Web root
+│   ├── admin/       # Admin interface
+│   ├── assets/      # Static assets
+│   └── logos/       # Uploaded logos
+└── logs/            # Application logs
+```
+
+## API Documentation
+See `features.json` for detailed API endpoints and functionality.

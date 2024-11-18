@@ -1,5 +1,7 @@
 # Changelog
 
+## [Unreleased]
+
 ## [1.0.0] - 2024-01-25
 
 ### Added
@@ -40,6 +42,26 @@
 - Undefined variable warnings
 - Implementation update functionality
 - File upload handling
+
+## [0.3.0] - 2024-01-18
+### Added
+- Environment-aware database initialization
+- Database recreation for staging environment
+- More comprehensive sample data for staging
+- URL uniqueness validation with `isUrlTaken` method
+- Public methods for database operations: `executeQuery`, `executeRawSQL`
+
+### Changed
+- Admin panel now shows all entries including drafts
+- Improved error handling and logging
+- Separated staging and production initialization logic
+- Made database property public for initialization
+
+### Fixed
+- Draft entries visibility in admin panel
+- URL conflict handling when updating entries
+- Database initialization in staging environment
+- Sample data loading consistency
 
 ## File Changes
 
