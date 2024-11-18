@@ -4,7 +4,7 @@
 php artisan down || true
 
 # Pull the latest changes from the git repository
-git pull origin main
+git pull origin staging
 
 # Install/update composer dependencies
 composer install --no-interaction --prefer-dist --optimize-autoloader

@@ -11,8 +11,8 @@ cd /home/stagingllmstxtdirectory/staging.llmstxt.directory
 
 # Initial git setup
 git fetch --all
-git checkout -f staging || git checkout -f main
-git pull origin staging || git pull origin main
+git checkout -f staging
+git pull origin staging
 
 # Set permissions
 chown -R stagingllmstxtdirectory:stagingllmstxtdirectory .
