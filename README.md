@@ -9,6 +9,29 @@ A directory of AI-friendly documentation implementations using the llms.txt stan
 - View implementation details and statistics
 - Vote for useful implementations
 - Submit new implementations
+- Performance monitoring and analytics
+- Staging environment for testing
+
+## Infrastructure
+
+### Production Environment
+- Domain: [llmstxt.directory](https://llmstxt.directory)
+- SSL: Enabled via Forge
+- CDN: Cloudflare with Full SSL mode
+- Analytics: Beam Analytics
+
+### Staging Environment
+- Domain: [staging.llmstxt.directory](https://staging.llmstxt.directory)
+- SSL: Enabled via Forge
+- CDN: Cloudflare with Full SSL mode
+- Debug Mode: Enhanced logging and performance metrics
+
+### Performance Monitoring
+- Request Duration Tracking
+- Database Query Performance
+- Memory Usage Monitoring
+- Route-specific Performance Metrics
+- Statistical Analysis (avg, median, percentiles)
 
 ## Getting Started
 
@@ -53,7 +76,8 @@ We welcome contributions! Here's how you can help:
 - Follow PHP PSR-12 coding standards
 - Write meaningful commit messages
 - Update documentation as needed
-- Test thoroughly before submitting
+- Test thoroughly on staging before production
+- Monitor performance metrics after changes
 
 ## Project Structure
 
@@ -61,11 +85,49 @@ We welcome contributions! Here's how you can help:
 llmstxtdirectory/
 ├── db/                 # Database management
 ├── includes/           # PHP includes
+│   ├── environment.php # Environment detection
+│   ├── monitoring.php  # Performance monitoring
+│   └── helpers.php     # Utility functions
 ├── public/            # Web root
+│   ├── admin/        # Admin interface
 │   ├── logos/        # Implementation logos
 │   └── index.php     # Main entry point
+├── logs/             # Application logs
 └── storage/          # Application storage
 ```
+
+## Environment Configuration
+
+### Production
+- `APP_ENV=production`
+- Debug mode disabled
+- Full performance monitoring
+- Cloudflare CDN enabled
+
+### Staging
+- `APP_ENV=staging`
+- Enhanced debugging capabilities
+- Detailed performance metrics
+- No-cache headers for testing
+
+## Performance Metrics
+
+The application tracks various performance metrics:
+
+- **Request Duration**
+  - Average response time
+  - 95th/99th percentiles
+  - Maximum duration
+
+- **Database Performance**
+  - Query execution time
+  - Query counts
+  - Performance by route
+
+- **Memory Usage**
+  - Average consumption
+  - Peak usage
+  - Usage patterns
 
 ## License
 
