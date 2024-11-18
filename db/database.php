@@ -302,7 +302,7 @@ class Database {
         }
     }
 
-    public function getRecentlyAddedImplementations($limit = 6) {
+    public function getRecentlyAddedImplementations($limit = 12) {
         try {
             $query = "SELECT * FROM implementations WHERE is_draft = 0 ORDER BY id DESC LIMIT :limit";
             $params = [':limit' => $limit];
