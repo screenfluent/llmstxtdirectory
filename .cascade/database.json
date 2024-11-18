@@ -1,0 +1,78 @@
+{
+  "database": {
+    "type": "SQLite3",
+    "file": "db/votes.db",
+    "initialization": {
+      "staging": {
+        "strategy": "recreate",
+        "sampleData": "full",
+        "frequency": "every-deployment"
+      },
+      "production": {
+        "strategy": "preserve",
+        "sampleData": "minimal",
+        "frequency": "first-time-only"
+      }
+    }
+  },
+  "schema": {
+    "implementations": {
+      "fields": {
+        "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
+        "name": "TEXT NOT NULL",
+        "logo_url": "TEXT",
+        "description": "TEXT",
+        "llms_txt_url": "TEXT NOT NULL UNIQUE",
+        "has_full": "INTEGER DEFAULT 0",
+        "is_featured": "INTEGER DEFAULT 0",
+        "is_requested": "INTEGER DEFAULT 0",
+        "is_draft": "INTEGER DEFAULT 1",
+        "votes": "INTEGER DEFAULT 0",
+        "created_at": "DATETIME DEFAULT CURRENT_TIMESTAMP",
+        "updated_at": "DATETIME DEFAULT CURRENT_TIMESTAMP"
+      },
+      "indexes": ["llms_txt_url"]
+    },
+    "votes": {
+      "fields": {
+        "id": "INTEGER PRIMARY KEY",
+        "implementation_id": "INTEGER",
+        "user_ip": "TEXT",
+        "voted_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+      },
+      "foreignKeys": [
+        {
+          "field": "implementation_id",
+          "references": "implementations(id)"
+        }
+      ]
+    }
+  },
+  "methods": {
+    "public": {
+      "db": "SQLite3 instance",
+      "executeRawSQL": "Execute raw SQL queries",
+      "executeQuery": "Execute parameterized queries",
+      "recreateDatabase": "Recreate database (staging only)",
+      "getImplementations": "Get implementations with admin flag",
+      "addImplementation": "Add new implementation",
+      "updateImplementation": "Update existing implementation",
+      "deleteImplementation": "Delete implementation",
+      "isUrlTaken": "Check URL uniqueness"
+    }
+  },
+  "security": {
+    "permissions": {
+      "file": "644",
+      "directory": "755"
+    },
+    "access": {
+      "read": ["www-data"],
+      "write": ["www-data"]
+    },
+    "validation": {
+      "url": "Unique constraint",
+      "input": "Parameterized queries"
+    }
+  }
+}

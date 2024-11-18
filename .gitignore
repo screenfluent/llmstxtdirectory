@@ -23,7 +23,7 @@
 /logs/*
 !/logs/.gitkeep
 
-# Documentation
+# Local documentation
 /.cascade/
 
 # User uploads
