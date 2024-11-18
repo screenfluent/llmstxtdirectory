@@ -106,9 +106,10 @@ $requestStart = startRequestTiming();
         }
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
             padding: 0;
+            margin-bottom: 32px;
         }
         .card {
             background: #FAFAFA;
