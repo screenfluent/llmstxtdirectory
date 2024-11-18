@@ -16,6 +16,12 @@
         "status": "complete",
         "description": "Ensure unique and valid llms.txt URLs",
         "constraints": ["unique", "valid_url"]
+      },
+      "analytics": {
+        "status": "complete",
+        "description": "Beam Analytics integration for production environment",
+        "provider": "Beam Analytics",
+        "environment": "production_only"
       }
     },
     "deployment": {

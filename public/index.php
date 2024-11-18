@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../includes/environment.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <?php if (isProduction()): ?>
+    <script
+        src="https://beamanalytics.b-cdn.net/beam.min.js"
+        data-token="93f53d9b-fadc-433a-9c7c-9621ac1ee672"
+        async
+    ></script>
+    <?php endif; ?>
     <style>
         body {
             margin: 0;

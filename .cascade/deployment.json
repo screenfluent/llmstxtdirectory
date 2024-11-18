@@ -20,6 +20,11 @@
           "files": "644",
           "directories": "755"
         }
+      },
+      "analytics": {
+        "provider": "Beam Analytics",
+        "token": "93f53d9b-fadc-433a-9c7c-9621ac1ee672",
+        "script": "https://beamanalytics.b-cdn.net/beam.min.js"
       }
     },
     "staging": {
@@ -43,6 +48,10 @@
           "files": "644",
           "directories": "755"
         }
+      },
+      "analytics": {
+        "enabled": false,
+        "note": "Analytics disabled in staging environment"
       }
     }
   },
