@@ -778,7 +778,8 @@ $requestStart = startRequestTiming();
         </div>
     </footer>
     <?php
-    endRequestTiming($requestStart, '/');
+    logMemoryUsage();
+    endRequestTiming($requestStart, $_SERVER['REQUEST_URI']);
     ?>
 </body>
 </html>
