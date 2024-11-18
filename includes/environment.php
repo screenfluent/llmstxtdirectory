@@ -30,12 +30,20 @@ if (!function_exists('env')) {
 
 if (!function_exists('isProduction')) {
     function isProduction() {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if ($host === 'llmstxt.directory') {
+            return true;
+        }
         return env('APP_ENV') === 'production';
     }
 }
 
 if (!function_exists('isDebug')) {
     function isDebug() {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        if ($host === 'llmstxt.directory' || $host === 'staging.llmstxt.directory') {
+            return false;
+        }
         return env('APP_DEBUG') === 'true';
     }
 }

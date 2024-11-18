@@ -23,6 +23,50 @@ class Database {
         }
     }
 
+    private function executeQuery($query, $params = []) {
+        $start = microtime(true);
+        try {
+            $stmt = $this->db->prepare($query);
+            
+            if ($stmt === false) {
+                throw new Exception($this->db->lastErrorMsg());
+            }
+            
+            foreach ($params as $param => $value) {
+                if (is_int($value)) {
+                    $stmt->bindValue($param, $value, SQLITE3_INTEGER);
+                } else {
+                    $stmt->bindValue($param, $value, SQLITE3_TEXT);
+                }
+            }
+            
+            $result = $stmt->execute();
+            
+            if ($result === false) {
+                throw new Exception($this->db->lastErrorMsg());
+            }
+            
+            return $result;
+        } finally {
+            $duration = (microtime(true) - $start) * 1000; // Convert to milliseconds
+            logDatabaseQuery($query, $duration);
+        }
+    }
+
+    private function fetchAll($query, $params = []) {
+        $result = $this->executeQuery($query, $params);
+        $rows = [];
+        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+            $rows[] = $row;
+        }
+        return $rows;
+    }
+
+    private function fetchOne($query, $params = []) {
+        $result = $this->executeQuery($query, $params);
+        return $result->fetchArray(SQLITE3_ASSOC);
+    }
+
     public function recreateDatabase() {
         try {
             // Close existing connection
@@ -45,6 +89,10 @@ class Database {
             ]);
             throw $e;
         }
+    }
+
+    public function executeRawSQL($sql) {
+        return $this->executeQuery($sql);
     }
 
     public function initializeDatabase() {
@@ -99,46 +147,6 @@ class Database {
         }
     }
 
-    public function executeRawSQL($sql) {
-        try {
-            return $this->db->exec($sql);
-        } catch (Exception $e) {
-            logError('Database error executing raw SQL', [
-                'sql' => $sql,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
-        }
-    }
-
-    public function executeQuery($query, $params = []) {
-        $start = microtime(true);
-        try {
-            $stmt = $this->db->prepare($query);
-            
-            foreach ($params as $param => $value) {
-                if (is_int($value)) {
-                    $stmt->bindValue($param, $value, SQLITE3_INTEGER);
-                } else {
-                    $stmt->bindValue($param, $value, SQLITE3_TEXT);
-                }
-            }
-            
-            $result = $stmt->execute();
-            $duration = (microtime(true) - $start) * 1000; // Convert to milliseconds
-            logDatabaseQuery($query, $duration);
-            
-            return $result;
-        } catch (Exception $e) {
-            logError('Database error', [
-                'query' => $query,
-                'params' => $params,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
-        }
-    }
-
     public function getImplementations($isAdmin = false) {
         try {
             $query = '
@@ -157,104 +165,6 @@ class Database {
                 'error' => $e->getMessage()
             ]);
             return [];
-        }
-    }
-
-    public function addImplementation($data) {
-        try {
-            // Check if URL already exists
-            if ($this->isUrlTaken($data['llms_txt_url'])) {
-                return false;
-            }
-
-            // Set default values for optional fields
-            $defaults = [
-                'logo_url' => null,
-                'description' => null,
-                'has_full' => 0,
-                'is_featured' => 0,
-                'is_requested' => 0,
-                'is_draft' => 1,
-                'votes' => 0
-            ];
-
-            // Merge defaults with provided data
-            $data = array_merge($defaults, $data);
-
-            $query = '
-                INSERT INTO implementations (
-                    name, logo_url, description, llms_txt_url, 
-                    has_full, is_featured, is_requested, 
-                    is_draft, votes
-                ) VALUES (
-                    :name, :logo_url, :description, :llms_txt_url,
-                    :has_full, :is_featured, :is_requested,
-                    :is_draft, :votes
-                )
-            ';
-            $params = [
-                ':name' => $data['name'],
-                ':logo_url' => $data['logo_url'],
-                ':description' => $data['description'],
-                ':llms_txt_url' => $data['llms_txt_url'],
-                ':has_full' => (int)$data['has_full'],
-                ':is_featured' => (int)$data['is_featured'],
-                ':is_requested' => (int)$data['is_requested'],
-                ':is_draft' => (int)$data['is_draft'],
-                ':votes' => (int)$data['votes']
-            ];
-            return $this->executeQuery($query, $params);
-        } catch (Exception $e) {
-            logError('Failed to add implementation', [
-                'data' => $data,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
-        }
-    }
-
-    public function updateImplementation($id, $data) {
-        try {
-            // Check if URL is taken by another implementation
-            if ($this->isUrlTaken($data['llms_txt_url'], $id)) {
-                return false;
-            }
-
-            $fields = [];
-            $values = [];
-            
-            // Only include fields that are actually provided
-            $allowedFields = [
-                'name', 'logo_url', 'description', 'llms_txt_url',
-                'has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'
-            ];
-            
-            foreach ($data as $key => $value) {
-                if (in_array($key, $allowedFields)) {
-                    $fields[] = "$key = :$key";
-                    if (in_array($key, ['has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'])) {
-                        $values[":$key"] = (int)$value;
-                    } else {
-                        $values[":$key"] = $value;
-                    }
-                }
-            }
-            
-            if (empty($fields)) {
-                return false;
-            }
-            
-            $values[':id'] = $id;
-            
-            $query = "UPDATE implementations SET " . implode(', ', $fields) . " WHERE id = :id";
-            return $this->executeQuery($query, $values);
-        } catch (Exception $e) {
-            logError('Failed to update implementation', [
-                'id' => $id,
-                'data' => $data,
-                'error' => $e->getMessage()
-            ]);
-            throw $e;
         }
     }
 
@@ -476,6 +386,104 @@ class Database {
                 'error' => $e->getMessage()
             ]);
             return false;
+        }
+    }
+
+    public function addImplementation($data) {
+        try {
+            // Check if URL already exists
+            if ($this->isUrlTaken($data['llms_txt_url'])) {
+                return false;
+            }
+
+            // Set default values for optional fields
+            $defaults = [
+                'logo_url' => null,
+                'description' => null,
+                'has_full' => 0,
+                'is_featured' => 0,
+                'is_requested' => 0,
+                'is_draft' => 1,
+                'votes' => 0
+            ];
+
+            // Merge defaults with provided data
+            $data = array_merge($defaults, $data);
+
+            $query = '
+                INSERT INTO implementations (
+                    name, logo_url, description, llms_txt_url, 
+                    has_full, is_featured, is_requested, 
+                    is_draft, votes
+                ) VALUES (
+                    :name, :logo_url, :description, :llms_txt_url,
+                    :has_full, :is_featured, :is_requested,
+                    :is_draft, :votes
+                )
+            ';
+            $params = [
+                ':name' => $data['name'],
+                ':logo_url' => $data['logo_url'],
+                ':description' => $data['description'],
+                ':llms_txt_url' => $data['llms_txt_url'],
+                ':has_full' => (int)$data['has_full'],
+                ':is_featured' => (int)$data['is_featured'],
+                ':is_requested' => (int)$data['is_requested'],
+                ':is_draft' => (int)$data['is_draft'],
+                ':votes' => (int)$data['votes']
+            ];
+            return $this->executeQuery($query, $params);
+        } catch (Exception $e) {
+            logError('Failed to add implementation', [
+                'data' => $data,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
+    }
+
+    public function updateImplementation($id, $data) {
+        try {
+            // Check if URL is taken by another implementation
+            if ($this->isUrlTaken($data['llms_txt_url'], $id)) {
+                return false;
+            }
+
+            $fields = [];
+            $values = [];
+            
+            // Only include fields that are actually provided
+            $allowedFields = [
+                'name', 'logo_url', 'description', 'llms_txt_url',
+                'has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'
+            ];
+            
+            foreach ($data as $key => $value) {
+                if (in_array($key, $allowedFields)) {
+                    $fields[] = "$key = :$key";
+                    if (in_array($key, ['has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'])) {
+                        $values[":$key"] = (int)$value;
+                    } else {
+                        $values[":$key"] = $value;
+                    }
+                }
+            }
+            
+            if (empty($fields)) {
+                return false;
+            }
+            
+            $values[':id'] = $id;
+            
+            $query = "UPDATE implementations SET " . implode(', ', $fields) . " WHERE id = :id";
+            return $this->executeQuery($query, $values);
+        } catch (Exception $e) {
+            logError('Failed to update implementation', [
+                'id' => $id,
+                'data' => $data,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
         }
     }
 }

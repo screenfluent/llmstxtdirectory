@@ -12,7 +12,7 @@ $requestStart = startRequestTiming();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <?php if (isProduction()): ?>
+    <?php if (isProduction() || isStaging()): ?>
     <script
         src="https://beamanalytics.b-cdn.net/beam.min.js"
         data-token="93f53d9b-fadc-433a-9c7c-9621ac1ee672"
@@ -778,7 +778,8 @@ $requestStart = startRequestTiming();
         </div>
     </footer>
     <?php
-    endRequestTiming($requestStart, '/');
+    logMemoryUsage();
+    endRequestTiming($requestStart, $_SERVER['REQUEST_URI']);
     ?>
 </body>
 </html>
