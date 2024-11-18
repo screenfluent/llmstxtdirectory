@@ -68,7 +68,7 @@ class Database {
         }
     }
 
-    private function executeQuery($query, $params = []) {
+    public function executeQuery($query, $params = []) {
         $start = microtime(true);
         try {
             $stmt = $this->db->prepare($query);
