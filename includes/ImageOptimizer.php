@@ -28,25 +28,34 @@ class ImageOptimizer {
      * @return array{success: bool, filename?: string, error?: string}
      */
     public function processUploadedImage(array $uploadedFile, string $name): array {
+        error_log("Starting image processing for file: " . ($uploadedFile['name'] ?? 'unknown'));
+        
         try {
             // Validate upload
             if (!isset($uploadedFile['tmp_name']) || !is_uploaded_file($uploadedFile['tmp_name'])) {
+                error_log("Invalid upload - tmp_name not set or not an uploaded file");
                 throw new RuntimeException('Invalid upload');
             }
             
             // Validate mime type
             $mimeType = mime_content_type($uploadedFile['tmp_name']);
+            error_log("Detected mime type: " . $mimeType);
             if (!in_array($mimeType, self::ALLOWED_TYPES)) {
+                error_log("Invalid file type. Allowed types: JPEG, PNG, GIF");
                 throw new RuntimeException('Invalid file type. Allowed types: JPEG, PNG, GIF');
             }
             
             // Ensure upload directory exists and is writable
+            error_log("Checking upload directory: " . $this->uploadDir);
             if (!is_dir($this->uploadDir)) {
+                error_log("Upload directory does not exist, attempting to create");
                 if (!mkdir($this->uploadDir, 0775, true)) {
+                    error_log("Failed to create upload directory");
                     throw new RuntimeException('Failed to create upload directory');
                 }
                 chmod($this->uploadDir, 0775);
             } elseif (!is_writable($this->uploadDir)) {
+                error_log("Upload directory is not writable: " . $this->uploadDir);
                 chmod($this->uploadDir, 0775);
                 if (!is_writable($this->uploadDir)) {
                     throw new RuntimeException('Upload directory is not writable');
@@ -60,14 +69,17 @@ class ImageOptimizer {
                 'image/gif' => imagecreatefromgif($uploadedFile['tmp_name']),
                 default => throw new RuntimeException('Unsupported image type')
             };
+            error_log("Created image resource from uploaded file");
             
             if (!$sourceImage) {
+                error_log("Failed to create image resource");
                 throw new RuntimeException('Failed to create image resource');
             }
             
             // Get original dimensions
             $origWidth = imagesx($sourceImage);
             $origHeight = imagesy($sourceImage);
+            error_log("Original dimensions: " . $origWidth . "x" . $origHeight);
             
             // Calculate new dimensions while maintaining aspect ratio
             if ($origWidth > $origHeight) {
@@ -77,9 +89,11 @@ class ImageOptimizer {
                 $newHeight = min($origHeight, self::MAX_SIZE);
                 $newWidth = (int)($origWidth * ($newHeight / $origHeight));
             }
+            error_log("Calculated new dimensions: " . $newWidth . "x" . $newHeight);
             
             // Create new image with calculated dimensions
             $newImage = imagecreatetruecolor($newWidth, $newHeight);
+            error_log("Created new image resource with calculated dimensions");
             
             // Enable alpha channel
             imagealphablending($newImage, false);
@@ -95,6 +109,7 @@ class ImageOptimizer {
                 $newWidth, $newHeight,
                 $origWidth, $origHeight
             );
+            error_log("Resized image with high quality resampling");
             
             // Generate filename from implementation name
             $safeName = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $name));
@@ -103,30 +118,38 @@ class ImageOptimizer {
                 $this->uploadDir,
                 $safeName
             );
+            error_log("Generated filename: " . $filename);
             
             // Delete old file if it exists
             if (file_exists($filename)) {
+                error_log("Old file exists, attempting to delete");
                 if (!is_writable($filename)) {
                     chmod($filename, 0664);
                 }
                 if (!unlink($filename)) {
+                    error_log("Failed to delete existing file: " . $filename);
                     throw new RuntimeException('Failed to delete existing file: ' . $filename);
                 }
             }
             
             // Save as WebP
             if (!imagewebp($newImage, $filename, self::WEBP_QUALITY)) {
+                error_log("Failed to save WebP image");
                 throw new RuntimeException('Failed to save WebP image');
             }
+            error_log("Saved WebP image");
             
             // Set proper permissions
             if (!chmod($filename, 0664)) {
+                error_log("Failed to set file permissions");
                 throw new RuntimeException('Failed to set file permissions');
             }
+            error_log("Set file permissions");
             
             // Cleanup
             imagedestroy($sourceImage);
             imagedestroy($newImage);
+            error_log("Destroyed image resources");
             
             return [
                 'success' => true,
@@ -134,7 +157,8 @@ class ImageOptimizer {
             ];
             
         } catch (RuntimeException $e) {
-            $this->logError('Image processing error', [
+            error_log("Error processing upload: " . $e->getMessage());
+            error_log("Upload details: " . json_encode([
                 'error' => $e->getMessage(),
                 'file' => $uploadedFile['name'] ?? 'unknown',
                 'upload_dir' => $this->uploadDir,
@@ -143,7 +167,8 @@ class ImageOptimizer {
                     'dir_writable' => is_writable($this->uploadDir),
                     'dir_perms' => decoct(fileperms($this->uploadDir) & 0777)
                 ]
-            ]);
+            ]));
+            
             return [
                 'success' => false,
                 'error' => $e->getMessage()

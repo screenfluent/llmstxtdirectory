@@ -398,6 +398,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $messageType = 'error';
                 }
                 break;
+                
+            case 'upload_logo':
+                error_log("Upload logo action triggered");
+                
+                if (!isset($_FILES['logo'])) {
+                    error_log("No logo file found in request");
+                    echo json_encode(['error' => 'No file uploaded']);
+                    exit;
+                }
+                
+                error_log("Logo file details: " . json_encode($_FILES['logo']));
+                
+                $uploadDir = __DIR__ . '/../../public/logos/';
+                error_log("Upload directory: " . $uploadDir);
+                error_log("Upload directory exists: " . (is_dir($uploadDir) ? 'yes' : 'no'));
+                error_log("Upload directory writable: " . (is_writable($uploadDir) ? 'yes' : 'no'));
+                
+                $optimizer = new ImageOptimizer($uploadDir);
+                $result = $optimizer->processUpload($_FILES['logo']);
+                
+                error_log("Upload result: " . json_encode($result));
+                echo json_encode($result);
+                exit;
         }
     }
 }
