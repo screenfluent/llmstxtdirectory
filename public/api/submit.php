@@ -1,91 +1,158 @@
 <?php
-require_once __DIR__ . '/../../includes/environment.php';
-require_once __DIR__ . '/../../db/database.php';
-require_once __DIR__ . '/../../includes/helpers.php';
+// Start output buffering
+ob_start();
 
+// Set error handling
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../../storage/logs/php_errors.log');
+
+// Ensure JSON response
 header('Content-Type: application/json');
 
-// Only allow POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Method not allowed'
-    ]);
-    exit;
-}
-
-// Validate required fields
-if (empty($_POST['llms_txt_url'])) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => 'llms.txt URL is required'
-    ]);
-    exit;
-}
-
-// Validate URL format
-if (!filter_var($_POST['llms_txt_url'], FILTER_VALIDATE_URL)) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid llms.txt URL format'
-    ]);
-    exit;
-}
-
-// Validate email if provided
-if (!empty($_POST['contact_email']) && !filter_var($_POST['contact_email'], FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid email format'
-    ]);
-    exit;
-}
-
-// Initialize database
-$db = new Database();
-
-// Check if URL already exists
-if ($db->getImplementationByUrl($_POST['llms_txt_url'])) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => 'This llms.txt URL has already been submitted'
-    ]);
-    exit;
-}
-
-// Extract domain for name
-$urlParts = parse_url($_POST['llms_txt_url']);
-$domain = str_replace('www.', '', $urlParts['host']);
-$name = ucfirst($domain);
-
-// Prepare data for insertion
-$data = [
-    'name' => $name,
-    'description' => 'Implementation from ' . $domain,
-    'llms_txt_url' => trim($_POST['llms_txt_url']),
-    'is_draft' => 1,
-    'has_full' => 0,
-    'is_featured' => 0,
-    'is_requested' => 0,
-    'is_maintainer' => !empty($_POST['is_maintainer']) ? 1 : 0,
-    'contact_email' => !empty($_POST['contact_email']) ? trim($_POST['contact_email']) : null
-];
-
 try {
-    $db->addImplementation($data);
-    echo json_encode([
+    require_once __DIR__ . '/../../includes/environment.php';
+    require_once __DIR__ . '/../../db/database.php';
+    require_once __DIR__ . '/../../includes/helpers.php';
+    require_once __DIR__ . '/../../includes/monitoring.php';
+
+    // Initialize database
+    $db = new Database();
+    
+    // Check if tables exist and create them if they don't
+    $db->initializeDatabase();
+
+    // Log request data
+    error_log(sprintf(
+        "Submission request: Method=%s, Data=%s",
+        $_SERVER['REQUEST_METHOD'],
+        json_encode($_POST)
+    ));
+
+    // Only allow POST requests
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Method not allowed');
+    }
+
+    // Check for honeypot
+    if (!empty($_POST['website'])) {
+        throw new Exception('Invalid submission');
+    }
+
+    // Rate limiting
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $rateLimit = 5; // submissions per hour
+    $rateLimitFile = __DIR__ . '/../../storage/ratelimit.json';
+    $currentTime = time();
+
+    // Ensure storage directory exists
+    $storageDir = dirname($rateLimitFile);
+    if (!file_exists($storageDir)) {
+        mkdir($storageDir, 0755, true);
+    }
+
+    // Load rate limit data
+    $rateLimitData = [];
+    if (file_exists($rateLimitFile)) {
+        $rateLimitData = json_decode(file_get_contents($rateLimitFile), true) ?? [];
+    }
+
+    // Clean up old entries (older than 1 hour)
+    foreach ($rateLimitData as $storedIp => $data) {
+        if ($currentTime - $data['timestamp'] > 3600) {
+            unset($rateLimitData[$storedIp]);
+        }
+    }
+
+    // Check rate limit
+    if (isset($rateLimitData[$ip])) {
+        if ($rateLimitData[$ip]['count'] >= $rateLimit) {
+            throw new Exception('Too many submissions. Please try again later.');
+        }
+        $rateLimitData[$ip]['count']++;
+    } else {
+        $rateLimitData[$ip] = [
+            'count' => 1,
+            'timestamp' => $currentTime
+        ];
+    }
+
+    // Save rate limit data
+    file_put_contents($rateLimitFile, json_encode($rateLimitData));
+
+    // Validate required fields
+    if (empty($_POST['llms_txt_url'])) {
+        throw new Exception('llms.txt URL is required');
+    }
+
+    // Basic URL validation
+    if (!filter_var($_POST['llms_txt_url'], FILTER_VALIDATE_URL)) {
+        throw new Exception('Invalid URL format');
+    }
+
+    // Validate email if provided
+    $email = $_POST['email'] ?? null;
+    if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('Invalid email format');
+    }
+
+    // Normalize URL
+    $url = rtrim($_POST['llms_txt_url'], '/');
+    if (!preg_match('~^https?://~i', $url)) {
+        $url = 'https://' . $url;
+    }
+
+    // Store submission in database
+    $submissionData = [
+        'url' => $url,
+        'email' => $email,
+        'is_maintainer' => true,
+        'ip_address' => $ip,
+        'submitted_at' => date('Y-m-d H:i:s')
+    ];
+
+    error_log("Attempting database submission: " . json_encode($submissionData));
+
+    $result = $db->addSubmission($submissionData);
+
+    if (!$result) {
+        throw new Exception('Failed to save submission to database');
+    }
+
+    // Clear output buffer
+    ob_clean();
+
+    // Send success response
+    $response = [
         'success' => true,
-        'message' => 'llms.txt submitted successfully! It will be reviewed before being published.'
-    ]);
+        'message' => 'Thank you for your submission!'
+    ];
+
+    echo json_encode($response);
+    exit;
+
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
+    // Log the error
+    error_log("Submission error: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+
+    // Clear output buffer
+    ob_clean();
+
+    // Send error response
+    $response = [
         'success' => false,
-        'message' => 'Failed to submit llms.txt. Please try again later.'
-    ]);
+        'message' => !isProduction() ? $e->getMessage() : 'An error occurred. Please try again.'
+    ];
+
+    if (!isProduction()) {
+        $response['debug'] = [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ];
+    }
+
+    http_response_code(400);
+    echo json_encode($response);
+    exit;
 }

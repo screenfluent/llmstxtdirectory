@@ -49,24 +49,98 @@ $requestStart = startRequestTiming();
         }
         .nav-title {
             font-size: 1.2em;
-            font-weight: 600;
-            color: #333;
+            font-weight: 500;
             text-decoration: none;
+            color: #333;
         }
         .submit-button {
-            padding: 6px 12px;
             background: #333;
             color: white;
-            border: none;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 0.9em;
-            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 6px;
             text-decoration: none;
+            font-size: 0.9em;
             transition: background-color 0.2s;
         }
         .submit-button:hover {
-            background: #444;
+            background: #555;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 10% auto;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .form-submit {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        .form-submit:hover {
+            background: #555;
+        }
+        .form-message {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .form-message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .form-message.error {
+            background: #f8d7da;
+            color: #721c24;
         }
         .container {
             max-width: 1200px;
@@ -442,9 +516,43 @@ $requestStart = startRequestTiming();
     <nav class="nav">
         <div class="nav-content">
             <a href="/" class="nav-title">llmstxt.directory</a>
-            <a href="https://github.com/jph00/llms-txt" class="submit-button">Submit</a>
+            <button onclick="openSubmitModal()" class="submit-button">Submit llms.txt</button>
         </div>
     </nav>
+
+    <!-- Submit Modal -->
+    <div id="submitModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSubmitModal()">&times;</span>
+            <h2>Submit llms.txt Implementation</h2>
+            <form id="submitForm" onsubmit="handleSubmit(event)">
+                <input type="hidden" name="csrf_token" value="<?php echo bin2hex(random_bytes(32)); ?>">
+                <div class="form-group">
+                    <label for="llms_txt_url">llms.txt URL *</label>
+                    <input type="text" id="llms_txt_url" name="llms_txt_url" required 
+                           placeholder="https://example.com/llms.txt" pattern="https?://.+">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email (optional)</label>
+                    <input type="email" id="email" name="email" 
+                           placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="is_maintainer">
+                        I am a maintainer of this website
+                    </label>
+                </div>
+                <!-- Honeypot field -->
+                <div style="display:none">
+                    <input type="text" name="website" tabindex="-1" autocomplete="off">
+                </div>
+                <button type="submit" class="form-submit">Submit</button>
+                <div id="formMessage" class="form-message"></div>
+            </form>
+        </div>
+    </div>
+
     <div class="hero">
         <div class="hero-content">
             <h1>
@@ -713,5 +821,100 @@ $requestStart = startRequestTiming();
     logMemoryUsage();
     endRequestTiming($requestStart, $_SERVER['REQUEST_URI']);
     ?>
+    <script>
+        function openSubmitModal() {
+            document.getElementById('submitModal').style.display = 'block';
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submitModal').style.display = 'none';
+            document.getElementById('submitForm').reset();
+            document.getElementById('formMessage').style.display = 'none';
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Log form data
+            console.log('Submitting form data:', {
+                url: formData.get('llms_txt_url'),
+                email: formData.get('email'),
+                is_maintainer: formData.get('is_maintainer')
+            });
+
+            // Don't submit if honeypot field is filled
+            if (formData.get('website')) {
+                return;
+            }
+
+            const submitButton = form.querySelector('button[type="submit"]');
+            const messageEl = document.getElementById('formMessage');
+            
+            try {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Submitting...';
+
+                const response = await fetch('/api/submit.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries([...response.headers]));
+
+                // Try to get the response text first
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                // Try to parse as JSON
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                    console.log('Parsed JSON response:', data);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    throw new Error('Invalid JSON response from server');
+                }
+
+                messageEl.style.display = 'block';
+                
+                if (response.ok && data.success) {
+                    messageEl.className = 'form-message success';
+                    messageEl.textContent = data.message;
+                    setTimeout(closeSubmitModal, 2000);
+                } else {
+                    messageEl.className = 'form-message error';
+                    messageEl.textContent = data.message || 'An error occurred. Please try again.';
+                    if (data.debug) {
+                        console.error('Submission error:', data.debug);
+                    }
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit';
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                console.error('Error details:', {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                });
+
+                messageEl.style.display = 'block';
+                messageEl.className = 'form-message error';
+                messageEl.textContent = 'An error occurred while submitting. Please try again.';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit';
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('submitModal')) {
+                closeSubmitModal();
+            }
+        }
+    </script>
 </body>
 </html>
