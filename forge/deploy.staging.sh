@@ -34,12 +34,12 @@ chmod -R 775 public/logos
 mkdir -p db
 chmod 755 db
 
-# Always recreate database in staging for clean testing
+# Database handling
 echo "Recreating staging database..."
-rm -f db/votes.db
-touch db/votes.db
-chown stagingllmstxtdirectory:www-data db/votes.db
-chmod 664 db/votes.db
+rm -f db/directory.db
+touch db/directory.db
+chown stagingllmstxtdirectory:www-data db/directory.db
+chmod 664 db/directory.db
 
 # Initialize with fresh schema and sample data
 echo "Initializing database with fresh schema and sample data..."
@@ -71,8 +71,8 @@ php -r "
 "
 
 # Set database permissions
-chown stagingllmstxtdirectory:www-data db/votes.db
-chmod 664 db/votes.db
+chown stagingllmstxtdirectory:www-data db/directory.db
+chmod 664 db/directory.db
 
 # Restart PHP
 ( flock -w 10 9 || exit 1

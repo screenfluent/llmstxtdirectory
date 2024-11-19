@@ -6,7 +6,7 @@ class Database {
     private $dbPath;
 
     public function __construct() {
-        $this->dbPath = __DIR__ . '/votes.db';
+        $this->dbPath = __DIR__ . '/directory.db';
         $this->connect();
     }
 

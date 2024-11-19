@@ -26,12 +26,12 @@ mkdir -p db
 chmod 755 db
 
 # Database handling
-if [ ! -f "db/votes.db" ]; then
+if [ ! -f "db/directory.db" ]; then
     # Only create new database if it doesn't exist
     echo "Creating new database..."
-    touch db/votes.db
-    chown llmstxtdirectory:www-data db/votes.db
-    chmod 664 db/votes.db
+    touch db/directory.db
+    chown llmstxtdirectory:www-data db/directory.db
+    chmod 664 db/directory.db
     
     # Initialize with schema and sample data
     echo "Initializing database with schema and sample data..."
@@ -57,8 +57,8 @@ else
 fi
 
 # Set database permissions
-chown llmstxtdirectory:www-data db/votes.db
-chmod 664 db/votes.db
+chown llmstxtdirectory:www-data db/directory.db
+chmod 664 db/directory.db
 
 # Restart PHP
 ( flock -w 10 9 || exit 1
