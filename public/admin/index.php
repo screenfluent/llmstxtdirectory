@@ -255,19 +255,29 @@ $implementations = $db->getImplementations(true); // Pass true to show all imple
             gap: 8px;
         }
         .btn {
-            padding: 4px 8px;
+            padding: 6px 12px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-family: inherit;
+            font-size: 14px;
+            margin: 0 4px;
         }
         .btn-edit {
-            background: #ffd700;
-            color: #333;
+            background: #333;
+            color: white;
         }
         .btn-delete {
             background: #dc3545;
             color: white;
+        }
+        .btn-delete:hover {
+            background: #bb2d3b;
+        }
+        .actions form {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
         }
         .modal {
             display: none;
