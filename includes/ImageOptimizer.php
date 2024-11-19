@@ -164,10 +164,7 @@ class ImageOptimizer
 
             // Delete existing file with more detailed error handling
             if (file_exists($targetPath)) {
-                error_log("Attempting to delete existing file: " . $targetPath);
-                
                 if (!is_writable($targetPath)) {
-                    error_log("File is not writable, attempting to change permissions: " . $targetPath);
                     chmod($targetPath, 0664);
                 }
                 
@@ -177,7 +174,6 @@ class ImageOptimizer
                         "Failed to delete existing file: " . ($error['message'] ?? 'Unknown error')
                     );
                 }
-                error_log("Successfully deleted existing file: " . $targetPath);
             }
 
             // Save new image with error handling
@@ -191,10 +187,11 @@ class ImageOptimizer
             // Set permissions with error handling
             if (!chmod($targetPath, 0664)) {
                 $error = error_get_last();
-                error_log("Warning: Failed to set permissions on new file: " . ($error['message'] ?? 'Unknown error'));
+                throw new RuntimeException(
+                    "Failed to set permissions on new file: " . ($error['message'] ?? 'Unknown error')
+                );
             }
 
-            error_log("Successfully saved new image: " . $targetPath);
             return [
                 "success" => true,
                 "filename" => $filename,
@@ -270,22 +267,13 @@ class ImageOptimizer
         foreach ($extensions as $ext) {
             $pattern = $this->uploadDir . "/" . $safeName . "*." . $ext;
             $files = glob($pattern);
-            
             if ($files === false) {
-                error_log("Warning: Failed to search for existing files with pattern: " . $pattern);
                 continue;
             }
             
             foreach ($files as $file) {
-                error_log("Found existing logo file to clean up: " . $file);
                 if (is_writable($file)) {
-                    if (!unlink($file)) {
-                        error_log("Warning: Failed to delete existing logo file: " . $file);
-                    } else {
-                        error_log("Successfully deleted existing logo file: " . $file);
-                    }
-                } else {
-                    error_log("Warning: Existing logo file not writable: " . $file);
+                    unlink($file);
                 }
             }
         }
