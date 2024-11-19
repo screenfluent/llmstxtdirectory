@@ -26,8 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     "has_full" => isset($_POST["has_full"]) ? 1 : 0,
                     "is_featured" => isset($_POST["is_featured"]) ? 1 : 0,
                     "is_draft" => isset($_POST["is_draft"]) ? 1 : 0,
-                    "is_requested" => isset($_POST["is_requested"]) ? 1 : 0,
-                    "votes" => $_POST["votes"] ?? 0,
                 ];
 
                 // Check for duplicate URL
@@ -79,8 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     "has_full" => isset($_POST["has_full"]) ? 1 : 0,
                     "is_featured" => isset($_POST["is_featured"]) ? 1 : 0,
                     "is_draft" => isset($_POST["is_draft"]) ? 1 : 0,
-                    "is_requested" => isset($_POST["is_requested"]) ? 1 : 0,
-                    "votes" => $_POST["votes"] ?? 0,
                 ];
 
                 // Handle logo upload
@@ -254,7 +250,10 @@ $implementations = $db->getImplementations(true);
         }
         td.description {
             white-space: normal;
-            max-width: 200px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         td.url {
             max-width: 150px;
@@ -267,9 +266,6 @@ $implementations = $db->getImplementations(true);
         }
         td.status {
             width: 80px;
-        }
-        td.votes {
-            width: 60px;
         }
         td.actions {
             width: 120px;
@@ -463,57 +459,27 @@ $implementations = $db->getImplementations(true);
                 <table>
                     <thead>
                         <tr>
-                            <th class="name">Name</th>
-                            <th class="logo">Logo URL</th>
-                            <th class="description">Description</th>
-                            <th class="url">llms.txt URL</th>
-                            <th class="status">Has Full</th>
-                            <th class="status">Is Featured</th>
-                            <th class="status">Is Draft</th>
-                            <th class="status">Type</th>
-                            <th class="votes">Votes</th>
-                            <th class="actions">Actions</th>
+                            <th>Name</th>
+                            <th>URL</th>
+                            <th>Description</th>
+                            <th>Featured</th>
+                            <th>Draft</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($implementations as $impl): ?>
                         <tr>
-                            <td class="name"><?= htmlspecialchars(
-                                $impl["name"]
-                            ) ?></td>
-                            <td class="logo"><?= htmlspecialchars(
-                                $impl["logo_url"] ?? ""
-                            ) ?></td>
-                            <td class="description"><?= htmlspecialchars(
-                                $impl["description"] ?? ""
-                            ) ?></td>
-                            <td class="url"><?= htmlspecialchars(
-                                $impl["llms_txt_url"] ?? ""
-                            ) ?></td>
-                            <td class="status"><?= $impl["has_full"]
-                                ? "Yes"
-                                : "No" ?></td>
-                            <td class="status"><?= $impl["is_featured"]
-                                ? "Yes"
-                                : "No" ?></td>
-                            <td class="status"><?= $impl["is_draft"]
-                                ? "Yes"
-                                : "No" ?></td>
-                            <td class="status"><?= $impl["is_requested"]
-                                ? "Requested"
-                                : "Regular" ?></td>
-                            <td class="votes"><?= htmlspecialchars(
-                                (string) ($impl["votes"] ?? 0)
-                            ) ?></td>
-                            <td class="actions">
-                                <button class="btn btn-edit" onclick="showEditModal(<?= htmlspecialchars(
-                                    json_encode($impl)
-                                ) ?>)">Edit</button>
+                            <td><?= htmlspecialchars($impl["name"]) ?></td>
+                            <td><?= htmlspecialchars($impl["llms_txt_url"]) ?></td>
+                            <td><?= htmlspecialchars($impl["description"]) ?></td>
+                            <td><?= $impl["is_featured"] ? "Yes" : "No" ?></td>
+                            <td><?= $impl["is_draft"] ? "Yes" : "No" ?></td>
+                            <td>
+                                <button class="btn btn-edit" onclick="showEditModal(<?= htmlspecialchars(json_encode($impl)) ?>)">Edit</button>
                                 <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this implementation?')">
                                     <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="id" value="<?= htmlspecialchars(
-                                        $impl["id"]
-                                    ) ?>">
+                                    <input type="hidden" name="id" value="<?= htmlspecialchars($impl["id"]) ?>">
                                     <button type="submit" class="btn btn-delete">Delete</button>
                                 </form>
                             </td>
@@ -577,13 +543,6 @@ $implementations = $db->getImplementations(true);
                     </label>
                 </div>
 
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="is_requested" name="is_requested" value="1">
-                        Is Requested Implementation
-                    </label>
-                </div>
-
                 <div class="modal-actions">
                     <button type="submit" class="btn add-new">Save</button>
                     <button type="button" class="btn cancel" onclick="closeModal()">Cancel</button>
@@ -603,7 +562,6 @@ $implementations = $db->getImplementations(true);
             document.getElementById('has_full').checked = false;
             document.getElementById('is_featured').checked = false;
             document.getElementById('is_draft').checked = false;
-            document.getElementById('is_requested').checked = false;
             document.querySelector('.logo-preview').style.display = 'none';
             document.getElementById('modal').style.display = 'flex';
         }
@@ -618,9 +576,8 @@ $implementations = $db->getImplementations(true);
             document.getElementById('has_full').checked = impl.has_full === 1;
             document.getElementById('is_featured').checked = impl.is_featured === 1;
             document.getElementById('is_draft').checked = impl.is_draft === 1;
-            document.getElementById('is_requested').checked = impl.is_requested === 1;
 
-const preview = document.querySelector('.logo-preview');
+            const preview = document.querySelector('.logo-preview');
             if (impl.logo_url) {
                 preview.style.display = 'block';
                 preview.querySelector('img').src = impl.logo_url;
@@ -628,14 +585,14 @@ const preview = document.querySelector('.logo-preview');
                 preview.style.display = 'none';
             }
 
-document.getElementById('modal').style.display = 'flex';
+            document.getElementById('modal').style.display = 'flex';
         }
 
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
         }
 
-// Keep modal open if there was an error
+        // Keep modal open if there was an error
         <?php if ($messageType === "error" && isset($_POST["action"])): ?>
         document.getElementById('modal').style.display = 'block';
         <?php endif; ?>

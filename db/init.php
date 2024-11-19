@@ -53,8 +53,7 @@ try {
                 'has_full' => 1,
                 'is_featured' => 1,
                 'is_requested' => 0,
-                'is_draft' => 0,
-                'votes' => 15
+                'is_draft' => 0
             ],
             [
                 'name' => 'Anthropic',
@@ -64,8 +63,7 @@ try {
                 'has_full' => 1,
                 'is_featured' => 1,
                 'is_requested' => 0,
-                'is_draft' => 0,
-                'votes' => 12
+                'is_draft' => 0
             ],
             [
                 'name' => 'Vercel',
@@ -75,8 +73,7 @@ try {
                 'has_full' => 0,
                 'is_featured' => 0,
                 'is_requested' => 1,
-                'is_draft' => 0,
-                'votes' => 42
+                'is_draft' => 0
             ],
             [
                 'name' => 'Next.js',
@@ -86,8 +83,7 @@ try {
                 'has_full' => 0,
                 'is_featured' => 0,
                 'is_requested' => 1,
-                'is_draft' => 0,
-                'votes' => 38
+                'is_draft' => 0
             ]
         ];
 
@@ -119,8 +115,7 @@ try {
                     'has_full' => 1,
                     'is_featured' => 1,
                     'is_requested' => 0,
-                    'is_draft' => 0,
-                    'votes' => 15
+                    'is_draft' => 0
                 ]
             ];
 

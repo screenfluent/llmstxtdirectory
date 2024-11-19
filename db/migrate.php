@@ -2,7 +2,7 @@
 require_once __DIR__ . '/database.php';
 
 try {
-    $db = new SQLite3(__DIR__ . '/votes.db');
+    $db = new SQLite3(__DIR__ . '/directory.db');
     
     // Add is_featured column if it doesn't exist
     $db->exec('ALTER TABLE implementations ADD COLUMN is_featured BOOLEAN DEFAULT 0');

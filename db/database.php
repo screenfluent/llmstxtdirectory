@@ -109,7 +109,6 @@ class Database {
                     is_featured INTEGER DEFAULT 0,
                     is_requested INTEGER DEFAULT 0,
                     is_draft INTEGER DEFAULT 0,
-                    votes INTEGER DEFAULT 0,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 )

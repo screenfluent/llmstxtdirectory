@@ -16,7 +16,7 @@ define('SITE_NAME', $_ENV['SITE_NAME'] ?? 'llms.txt Directory');
 define('SITE_URL', $_ENV['SITE_URL'] ?? 'https://llmstxt.directory');
 
 // Database settings
-define('DB_PATH', $_ENV['DB_PATH'] ?? __DIR__ . '/../db/votes.db');
+define('DB_PATH', $_ENV['DB_PATH'] ?? __DIR__ . '/../db/directory.db');
 
 // Error reporting
 define('LOG_PATH', $_ENV['LOG_PATH'] ?? __DIR__ . '/../storage/logs');

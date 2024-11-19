@@ -69,7 +69,6 @@ $data = [
     'description' => 'Implementation from ' . $domain,
     'llms_txt_url' => trim($_POST['llms_txt_url']),
     'is_draft' => 1,
-    'votes' => 0,
     'has_full' => 0,
     'is_featured' => 0,
     'is_requested' => 0,

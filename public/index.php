@@ -282,26 +282,6 @@ $requestStart = startRequestTiming();
             font-size: 0.9em;
             margin: 0;
         }
-        .upvote-button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border: 1px solid #E3E3E3;
-            border-radius: 6px;
-            background: white;
-            color: #666;
-            font-family: inherit;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .upvote-button:hover {
-            background: #f5f5f5;
-        }
-        .upvote-count {
-            font-weight: 500;
-        }
         .site-footer {
             background: #FAFAFA;
             border-top: 1px solid #E3E3E3;
@@ -457,48 +437,6 @@ $requestStart = startRequestTiming();
             margin: 40px 0;
         }
     </style>
-    <script>
-        async function handleUpvote(implementationId) {
-            const button = event.currentTarget;
-            const countSpan = button.querySelector('.upvote-count');
-            const currentCount = parseInt(countSpan.textContent);
-            
-            // Disable button temporarily
-            button.disabled = true;
-            
-            try {
-                const response = await fetch('/api/vote.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ implementationId })
-                });
-                
-                const data = await response.json();
-                
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-                
-                // Update count on success
-                countSpan.textContent = currentCount + 1;
-                
-                // Add visual feedback
-                button.style.background = '#f0f0f0';
-                setTimeout(() => {
-                    button.style.background = '';
-                }, 500);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to register vote');
-            } finally {
-                button.disabled = false;
-            }
-        }
-    </script>
 </head>
 <body>
     <nav class="nav">
@@ -551,8 +489,7 @@ $requestStart = startRequestTiming();
                     'has_full' => 1,
                     'description' => 'Superwall is a platform that helps you create and manage your own paywall.',
                     'is_requested' => 0,
-                    'is_featured' => 1,
-                    'votes' => 0
+                    'is_featured' => 1
                 ],
                 [
                     'name' => 'Anthropic',
@@ -561,8 +498,7 @@ $requestStart = startRequestTiming();
                     'has_full' => 1,
                     'description' => 'Anthropic is an AI research company that focuses on developing more generalizable, interpretable, and steerable AI systems.',
                     'is_requested' => 0,
-                    'is_featured' => 1,
-                    'votes' => 0
+                    'is_featured' => 1
                 ],
                 [
                     'name' => 'Cursor',
@@ -571,8 +507,7 @@ $requestStart = startRequestTiming();
                     'has_full' => 1,
                     'description' => 'Cursor is a platform that helps you create and manage your own knowledge graph.',
                     'is_requested' => 0,
-                    'is_featured' => 1,
-                    'votes' => 0
+                    'is_featured' => 1
                 ],
                 [
                     'name' => 'FastHTML',
@@ -581,8 +516,7 @@ $requestStart = startRequestTiming();
                     'has_full' => 0,
                     'description' => 'FastHTML is a fast and lightweight HTML parser.',
                     'is_requested' => 0,
-                    'is_featured' => 1,
-                    'votes' => 0
+                    'is_featured' => 1
                 ],
                 [
                     'name' => 'nbdev',
@@ -591,8 +525,7 @@ $requestStart = startRequestTiming();
                     'has_full' => 1,
                     'description' => 'nbdev is a platform that helps you create and manage your own Jupyter notebooks.',
                     'is_requested' => 0,
-                    'is_featured' => 1,
-                    'votes' => 0
+                    'is_featured' => 1
                 ],
                 [
                     'name' => 'fastcore',
@@ -601,8 +534,7 @@ $requestStart = startRequestTiming();
                     'has_full' => 1,
                     'description' => 'fastcore is a Python library that provides a set of tools for building and training neural networks.',
                     'is_requested' => 0,
-                    'is_featured' => 1,
-                    'votes' => 0
+                    'is_featured' => 1
                 ],
                 [
                     'name' => 'Answer.AI',
@@ -611,8 +543,7 @@ $requestStart = startRequestTiming();
                     'has_full' => 1,
                     'description' => 'Answer.AI is a platform that helps you create and manage your own conversational AI models.',
                     'is_requested' => 0,
-                    'is_featured' => 1,
-                    'votes' => 0
+                    'is_featured' => 1
                 ]
             ];
 
@@ -740,13 +671,6 @@ $requestStart = startRequestTiming();
             </div>
 
             <hr class="section-divider" />
-
-            <div class="directory-section">
-                <h2>Most Used</h2>
-                <div class="card-grid">
-                    <!-- Grid will be populated -->
-                </div>
-            </div>
 
             <div class="directory-section">
                 <h2>Tools & SDKs</h2>
