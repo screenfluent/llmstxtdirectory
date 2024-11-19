@@ -87,10 +87,18 @@ class ImageOptimizer {
                 $safeName
             );
             
+            // Delete old file if it exists
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+            
             // Save as WebP
             if (!imagewebp($newImage, $filename, self::WEBP_QUALITY)) {
                 throw new RuntimeException('Failed to save WebP image');
             }
+            
+            // Set proper permissions
+            chmod($filename, 0664);
             
             // Cleanup
             imagedestroy($sourceImage);

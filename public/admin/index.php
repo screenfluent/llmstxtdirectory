@@ -59,6 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             mkdir(__DIR__ . '/../logos', 0775, true);
                         }
                         
+                        // Delete old file if it exists
+                        if (file_exists($target_path)) {
+                            unlink($target_path);
+                        }
+                        
                         if (move_uploaded_file($file['tmp_name'], $target_path)) {
                             chmod($target_path, 0664);
                             $data['logo_url'] = '/logos/' . $filename;
@@ -107,6 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Create logos directory if it doesn't exist
                         if (!is_dir(__DIR__ . '/../logos')) {
                             mkdir(__DIR__ . '/../logos', 0775, true);
+                        }
+                        
+                        // Delete old file if it exists
+                        if (file_exists($target_path)) {
+                            unlink($target_path);
                         }
                         
                         if (move_uploaded_file($file['tmp_name'], $target_path)) {
