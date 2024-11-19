@@ -232,7 +232,7 @@ class Database {
 
     public function deleteImplementation($id) {
         try {
-            // Delete the implementation (votes will be deleted automatically due to ON DELETE CASCADE)
+            // Delete the implementation
             $query = 'DELETE FROM implementations WHERE id = :id';
             $params = [':id' => $id];
             $result = $this->executeQuery($query, $params);
@@ -252,51 +252,6 @@ class Database {
                 'error' => $e->getMessage()
             ]);
             return false;
-        }
-    }
-
-    public function addVote($implementationId) {
-        $userIp = $_SERVER['REMOTE_ADDR'];
-        
-        // Check if user already voted
-        $query = 'SELECT COUNT(*) as count FROM votes WHERE implementation_id = :impl_id AND user_ip = :user_ip';
-        $params = [
-            ':impl_id' => $implementationId,
-            ':user_ip' => $userIp
-        ];
-        $result = $this->executeQuery($query, $params);
-        
-        if ($result->fetchArray()['count'] > 0) {
-            return ['error' => 'Already voted'];
-        }
-        
-        // Begin transaction
-        $this->db->exec('BEGIN');
-        
-        try {
-            // Add vote record
-            $query = 'INSERT INTO votes (implementation_id, user_ip) VALUES (:impl_id, :user_ip)';
-            $params = [
-                ':impl_id' => $implementationId,
-                ':user_ip' => $userIp
-            ];
-            $this->executeQuery($query, $params);
-            
-            // Update vote count
-            $query = 'UPDATE implementations SET votes = votes + 1 WHERE id = :impl_id';
-            $params = [':impl_id' => $implementationId];
-            $this->executeQuery($query, $params);
-            
-            $this->db->exec('COMMIT');
-            return ['success' => true];
-        } catch (Exception $e) {
-            $this->db->exec('ROLLBACK');
-            logError('Failed to add vote', [
-                'implementationId' => $implementationId,
-                'userIp' => $userIp,
-                'error' => $e->getMessage()
-            ]);
-            return ['error' => $e->getMessage()];
         }
     }
 
@@ -402,8 +357,7 @@ class Database {
                 'has_full' => 0,
                 'is_featured' => 0,
                 'is_requested' => 0,
-                'is_draft' => 1,
-                'votes' => 0
+                'is_draft' => 1
             ];
 
             // Merge defaults with provided data
@@ -413,11 +367,11 @@ class Database {
                 INSERT INTO implementations (
                     name, logo_url, description, llms_txt_url, 
                     has_full, is_featured, is_requested, 
-                    is_draft, votes
+                    is_draft
                 ) VALUES (
                     :name, :logo_url, :description, :llms_txt_url,
                     :has_full, :is_featured, :is_requested,
-                    :is_draft, :votes
+                    :is_draft
                 )
             ';
             $params = [
@@ -428,8 +382,7 @@ class Database {
                 ':has_full' => (int)$data['has_full'],
                 ':is_featured' => (int)$data['is_featured'],
                 ':is_requested' => (int)$data['is_requested'],
-                ':is_draft' => (int)$data['is_draft'],
-                ':votes' => (int)$data['votes']
+                ':is_draft' => (int)$data['is_draft']
             ];
             return $this->executeQuery($query, $params);
         } catch (Exception $e) {
@@ -454,13 +407,13 @@ class Database {
             // Only include fields that are actually provided
             $allowedFields = [
                 'name', 'logo_url', 'description', 'llms_txt_url',
-                'has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'
+                'has_full', 'is_featured', 'is_requested', 'is_draft'
             ];
             
             foreach ($data as $key => $value) {
                 if (in_array($key, $allowedFields)) {
                     $fields[] = "$key = :$key";
-                    if (in_array($key, ['has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'])) {
+                    if (in_array($key, ['has_full', 'is_featured', 'is_requested', 'is_draft'])) {
                         $values[":$key"] = (int)$value;
                     } else {
                         $values[":$key"] = $value;
