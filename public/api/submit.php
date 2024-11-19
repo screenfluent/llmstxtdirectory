@@ -1,15 +1,23 @@
 <?php
-// Start output buffering
-ob_start();
-
 // Set error handling
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/../../storage/logs/php_errors.log');
 
+// Ensure clean output
+ob_start();
+
 // Ensure JSON response
 header('Content-Type: application/json');
+
+function sendJsonResponse($data, $statusCode = 200) {
+    ob_clean();
+    http_response_code($statusCode);
+    echo json_encode($data);
+    ob_end_flush();
+    exit;
+}
 
 try {
     require_once __DIR__ . '/../../includes/environment.php';
@@ -107,7 +115,7 @@ try {
     $submissionData = [
         'url' => $url,
         'email' => $email,
-        'is_maintainer' => true,
+        'is_maintainer' => !empty($_POST['is_maintainer']),
         'ip_address' => $ip,
         'submitted_at' => date('Y-m-d H:i:s')
     ];
@@ -120,26 +128,15 @@ try {
         throw new Exception('Failed to save submission to database');
     }
 
-    // Clear output buffer
-    ob_clean();
-
-    // Send success response
-    $response = [
+    sendJsonResponse([
         'success' => true,
         'message' => 'Thank you for your submission!'
-    ];
-
-    echo json_encode($response);
-    exit;
+    ]);
 
 } catch (Exception $e) {
     // Log the error
     error_log("Submission error: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
 
-    // Clear output buffer
-    ob_clean();
-
-    // Send error response
     $response = [
         'success' => false,
         'message' => !isProduction() ? $e->getMessage() : 'An error occurred. Please try again.'
@@ -152,7 +149,5 @@ try {
         ];
     }
 
-    http_response_code(400);
-    echo json_encode($response);
-    exit;
+    sendJsonResponse($response, 400);
 }
