@@ -213,8 +213,9 @@ class Database {
             $result = $this->executeQuery($query, $params);
             
             if ($result === false) {
-                logError('Failed to fetch implementation by ID', [
-                    'id' => $id
+                logError('Database query failed: Failed to fetch implementation', [
+                    'id' => $id,
+                    'query' => $query
                 ]);
                 return null;
             }
@@ -263,9 +264,9 @@ class Database {
             ':impl_id' => $implementationId,
             ':user_ip' => $userIp
         ];
-        $result = $this->executeQuery($query, $params)->fetchArray();
+        $result = $this->executeQuery($query, $params);
         
-        if ($result['count'] > 0) {
+        if ($result->fetchArray()['count'] > 0) {
             return ['error' => 'Already voted'];
         }
         
@@ -306,8 +307,9 @@ class Database {
             $result = $this->executeQuery($query, $params);
             
             if ($result === false) {
-                logError('Failed to fetch recent implementations', [
-                    'limit' => $limit
+                logError('Database query failed: Failed to fetch recent implementations', [
+                    'limit' => $limit,
+                    'query' => $query
                 ]);
                 return [];
             }
