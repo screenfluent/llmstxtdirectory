@@ -837,13 +837,6 @@ $requestStart = startRequestTiming();
             const form = event.target;
             const formData = new FormData(form);
             
-            // Log form data
-            console.log('Submitting form data:', {
-                url: formData.get('llms_txt_url'),
-                email: formData.get('email'),
-                is_maintainer: formData.get('is_maintainer')
-            });
-
             // Don't submit if honeypot field is filled
             if (formData.get('website')) {
                 return;
@@ -861,23 +854,7 @@ $requestStart = startRequestTiming();
                     body: formData
                 });
 
-                console.log('Response status:', response.status);
-                console.log('Response headers:', Object.fromEntries([...response.headers]));
-
-                // Try to get the response text first
-                const responseText = await response.text();
-                console.log('Raw response:', responseText);
-
-                // Try to parse as JSON
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                    console.log('Parsed JSON response:', data);
-                } catch (parseError) {
-                    console.error('JSON parse error:', parseError);
-                    throw new Error('Invalid JSON response from server');
-                }
-
+                const data = await response.json();
                 messageEl.style.display = 'block';
                 
                 if (response.ok && data.success) {
@@ -887,32 +864,15 @@ $requestStart = startRequestTiming();
                 } else {
                     messageEl.className = 'form-message error';
                     messageEl.textContent = data.message || 'An error occurred. Please try again.';
-                    if (data.debug) {
-                        console.error('Submission error:', data.debug);
-                    }
                     submitButton.disabled = false;
                     submitButton.textContent = 'Submit';
                 }
             } catch (error) {
-                console.error('Submission error:', error);
-                console.error('Error details:', {
-                    name: error.name,
-                    message: error.message,
-                    stack: error.stack
-                });
-
                 messageEl.style.display = 'block';
                 messageEl.className = 'form-message error';
-                messageEl.textContent = 'An error occurred while submitting. Please try again.';
+                messageEl.textContent = 'An error occurred. Please try again.';
                 submitButton.disabled = false;
                 submitButton.textContent = 'Submit';
-            }
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('submitModal')) {
-                closeSubmitModal();
             }
         }
     </script>

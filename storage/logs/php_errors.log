@@ -62,3 +62,5 @@ Trace: #0 /Applications/Herd.app/Contents/Resources/valet/server.php(167): requi
 [19-Nov-2024 21:06:49 UTC] Submission error: Too many submissions. Please try again later.
 Trace: #0 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require()
 #1 {main}
+[19-Nov-2024 21:25:44 UTC] Initializing database with schema
+[19-Nov-2024 21:25:44 UTC] Submission error: Too many submissions. Please try again later.

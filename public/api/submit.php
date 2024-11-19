@@ -19,38 +19,7 @@ function sendJsonResponse($data, $statusCode = 200) {
     exit;
 }
 
-try {
-    require_once __DIR__ . '/../../includes/environment.php';
-    require_once __DIR__ . '/../../db/database.php';
-    require_once __DIR__ . '/../../includes/helpers.php';
-    require_once __DIR__ . '/../../includes/monitoring.php';
-
-    // Initialize database
-    $db = new Database();
-    
-    // Check if tables exist and create them if they don't
-    $db->initializeDatabase();
-
-    // Log request data
-    error_log(sprintf(
-        "Submission request: Method=%s, Data=%s",
-        $_SERVER['REQUEST_METHOD'],
-        json_encode($_POST)
-    ));
-
-    // Only allow POST requests
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('Method not allowed');
-    }
-
-    // Check for honeypot
-    if (!empty($_POST['website'])) {
-        throw new Exception('Invalid submission');
-    }
-
-    // Rate limiting
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $rateLimit = 5; // submissions per hour
+function checkRateLimit($ip, $limit = 5, $period = 3600) {
     $rateLimitFile = __DIR__ . '/../../storage/ratelimit.json';
     $currentTime = time();
 
@@ -66,16 +35,16 @@ try {
         $rateLimitData = json_decode(file_get_contents($rateLimitFile), true) ?? [];
     }
 
-    // Clean up old entries (older than 1 hour)
+    // Clean up old entries
     foreach ($rateLimitData as $storedIp => $data) {
-        if ($currentTime - $data['timestamp'] > 3600) {
+        if ($currentTime - $data['timestamp'] > $period) {
             unset($rateLimitData[$storedIp]);
         }
     }
 
     // Check rate limit
     if (isset($rateLimitData[$ip])) {
-        if ($rateLimitData[$ip]['count'] >= $rateLimit) {
+        if ($rateLimitData[$ip]['count'] >= $limit) {
             throw new Exception('Too many submissions. Please try again later.');
         }
         $rateLimitData[$ip]['count']++;
@@ -88,6 +57,30 @@ try {
 
     // Save rate limit data
     file_put_contents($rateLimitFile, json_encode($rateLimitData));
+}
+
+try {
+    require_once __DIR__ . '/../../includes/environment.php';
+    require_once __DIR__ . '/../../db/database.php';
+    require_once __DIR__ . '/../../includes/helpers.php';
+    require_once __DIR__ . '/../../includes/monitoring.php';
+
+    // Initialize database
+    $db = new Database();
+    $db->initializeDatabase();
+
+    // Only allow POST requests
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Method not allowed');
+    }
+
+    // Check for honeypot
+    if (!empty($_POST['website'])) {
+        throw new Exception('Invalid submission');
+    }
+
+    // Check rate limit
+    checkRateLimit($_SERVER['REMOTE_ADDR']);
 
     // Validate required fields
     if (empty($_POST['llms_txt_url'])) {
@@ -116,15 +109,11 @@ try {
         'url' => $url,
         'email' => $email,
         'is_maintainer' => !empty($_POST['is_maintainer']),
-        'ip_address' => $ip,
+        'ip_address' => $_SERVER['REMOTE_ADDR'],
         'submitted_at' => date('Y-m-d H:i:s')
     ];
 
-    error_log("Attempting database submission: " . json_encode($submissionData));
-
-    $result = $db->addSubmission($submissionData);
-
-    if (!$result) {
+    if (!$db->addSubmission($submissionData)) {
         throw new Exception('Failed to save submission to database');
     }
 
@@ -134,8 +123,7 @@ try {
     ]);
 
 } catch (Exception $e) {
-    // Log the error
-    error_log("Submission error: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString());
+    error_log("Submission error: " . $e->getMessage());
 
     $response = [
         'success' => false,
