@@ -8,6 +8,10 @@ class ImageOptimizer {
     private string $uploadDir;
     
     public function __construct(string $uploadDir = 'public/logos') {
+        // Convert relative path to absolute if needed
+        if (strpos($uploadDir, '/') !== 0) {
+            $uploadDir = __DIR__ . '/../' . $uploadDir;
+        }
         $this->uploadDir = rtrim($uploadDir, '/');
         
         // Ensure GD is available

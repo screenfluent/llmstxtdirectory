@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../includes/ImageOptimizer.php';
 requireAdminAuth();
 
 $db = new Database();
-$imageOptimizer = new ImageOptimizer(__DIR__ . '/../logos');
+$imageOptimizer = new ImageOptimizer('public/logos');
 
 // Initialize message variables
 $message = '';
@@ -52,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } elseif ($ext === 'svg') {
                         // Handle SVG files separately (no optimization needed)
                         $filename = get_logo_filename($_POST['name']) . '.svg';
-                        $target_path = __DIR__ . '/../logos/' . $filename;
-                        $logos_dir = __DIR__ . '/../logos';
+                        $logos_dir = __DIR__ . '/../../public/logos';
+                        $target_path = $logos_dir . '/' . $filename;
                         
                         // Create logos directory if it doesn't exist
                         if (!is_dir($logos_dir)) {
@@ -155,8 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } elseif ($ext === 'svg') {
                         // Handle SVG files separately (no optimization needed)
                         $filename = get_logo_filename($_POST['name']) . '.svg';
-                        $target_path = __DIR__ . '/../logos/' . $filename;
-                        $logos_dir = __DIR__ . '/../logos';
+                        $logos_dir = __DIR__ . '/../../public/logos';
+                        $target_path = $logos_dir . '/' . $filename;
                         
                         // Create logos directory if it doesn't exist
                         if (!is_dir($logos_dir)) {
