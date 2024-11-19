@@ -134,7 +134,7 @@ class ImageOptimizer {
             ];
             
         } catch (RuntimeException $e) {
-            logError('Image processing error', [
+            $this->logError('Image processing error', [
                 'error' => $e->getMessage(),
                 'file' => $uploadedFile['name'] ?? 'unknown',
                 'upload_dir' => $this->uploadDir,
@@ -149,6 +149,11 @@ class ImageOptimizer {
                 'error' => $e->getMessage()
             ];
         }
+    }
+    
+    private function logError($message, $data = []) {
+        $timestamp = date('Y-m-d H:i:s');
+        error_log("[$timestamp] ImageOptimizer: $message " . json_encode($data));
     }
     
     /**

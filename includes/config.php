@@ -40,7 +40,9 @@ if (!is_dir(LOG_PATH)) {
 function custom_error_handler($errno, $errstr, $errfile, $errline) {
     $timestamp = date('Y-m-d H:i:s');
     $message = "[$timestamp] $errstr in $errfile on line $errline\n";
-    error_log($message, 3, LOG_PATH . '/error.log');
+    
+    // Log to PHP's default error log instead of a custom file
+    error_log($message);
     
     if (DEBUG) {
         return false; // Let PHP handle the error in debug mode
