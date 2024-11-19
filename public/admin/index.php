@@ -1,144 +1,168 @@
 <?php
-require_once __DIR__ . '/../../includes/environment.php';
-require_once __DIR__ . '/../../includes/admin_auth.php';
-require_once __DIR__ . '/../../db/database.php';
-require_once __DIR__ . '/../../includes/helpers.php';
-require_once __DIR__ . '/../../includes/ImageOptimizer.php';
+require_once __DIR__ . "/../../includes/environment.php";
+require_once __DIR__ . "/../../includes/admin_auth.php";
+require_once __DIR__ . "/../../db/database.php";
+require_once __DIR__ . "/../../includes/helpers.php";
+require_once __DIR__ . "/../../includes/ImageOptimizer.php";
 
 // Require authentication
 requireAdminAuth();
 
 $db = new Database();
-$imageOptimizer = new ImageOptimizer(__DIR__ . '/../logos');
+$imageOptimizer = new ImageOptimizer("public/logos");
 
 // Initialize message variables
-$message = '';
-$messageType = '';
+$message = "";
+$messageType = "";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action'])) {
-        switch ($_POST['action']) {
-            case 'add':
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST["action"])) {
+        switch ($_POST["action"]) {
+            case "add":
                 $data = [
-                    'name' => $_POST['name'],
-                    'description' => $_POST['description'],
-                    'llms_txt_url' => $_POST['llms_txt_url'],
-                    'has_full' => isset($_POST['has_full']) ? 1 : 0,
-                    'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
-                    'is_draft' => isset($_POST['is_draft']) ? 1 : 0,
-                    'is_requested' => isset($_POST['is_requested']) ? 1 : 0,
-                    'votes' => $_POST['votes'] ?? 0
+                    "name" => $_POST["name"],
+                    "description" => $_POST["description"],
+                    "llms_txt_url" => $_POST["llms_txt_url"],
+                    "has_full" => isset($_POST["has_full"]) ? 1 : 0,
+                    "is_featured" => isset($_POST["is_featured"]) ? 1 : 0,
+                    "is_draft" => isset($_POST["is_draft"]) ? 1 : 0,
+                    "is_requested" => isset($_POST["is_requested"]) ? 1 : 0,
+                    "votes" => $_POST["votes"] ?? 0,
                 ];
-                
-                // Check for duplicate URL before upload handling
-                $existing = $db->getImplementationByUrl($data['llms_txt_url']);
+
+                // Check for duplicate URL
+                $existing = $db->getImplementationByUrl($data["llms_txt_url"]);
                 if ($existing) {
-                    $message = "An implementation with this llms.txt URL already exists.";
-                    $messageType = 'error';
+                    $message =
+                        "An implementation with this llms.txt URL already exists.";
+                    $messageType = "error";
                     break;
                 }
-                
+
                 // Handle logo upload
-                if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-                    $file = $_FILES['logo'];
-                    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                    
-                    // Validate file type
-                    if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'])) {
-                        $result = $imageOptimizer->processUploadedImage($file, $_POST['name']);
-                        if ($result['success']) {
-                            $data['logo_url'] = '/logos/' . $result['filename'];
-                        }
-                    } elseif ($ext === 'svg') {
-                        // Handle SVG files separately (no optimization needed)
-                        $filename = get_logo_filename($_POST['name']) . '.svg';
-                        $target_path = __DIR__ . '/../logos/' . $filename;
-                        
-                        // Create logos directory if it doesn't exist
-                        if (!is_dir(__DIR__ . '/../logos')) {
-                            mkdir(__DIR__ . '/../logos', 0775, true);
-                        }
-                        
-                        if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                            chmod($target_path, 0664);
-                            $data['logo_url'] = '/logos/' . $filename;
-                        }
+                if (
+                    isset($_FILES["logo"]) &&
+                    $_FILES["logo"]["error"] === UPLOAD_ERR_OK
+                ) {
+                    $result = $imageOptimizer->processUploadedImage(
+                        $_FILES["logo"],
+                        $_POST["name"]
+                    );
+
+                    if ($result["success"]) {
+                        $data["logo_url"] = "/logos/" . $result["filename"];
+                    } else {
+                        $message =
+                            "Failed to process logo: " .
+                            ($result["error"] ?? "Unknown error");
+                        $messageType = "error";
+                        break;
                     }
                 }
-                
+
                 if ($db->addImplementation($data)) {
                     $message = "Implementation added successfully!";
-                    $messageType = 'success';
+                    $messageType = "success";
                 } else {
-                    $message = "Failed to add implementation. Please try again.";
-                    $messageType = 'error';
+                    $message =
+                        "Failed to add implementation. Please try again.";
+                    $messageType = "error";
                 }
                 break;
-                
-            case 'edit':
-                $id = $_POST['id'];
+
+            case "edit":
+                $id = $_POST["id"];
                 $data = [
-                    'name' => $_POST['name'],
-                    'description' => $_POST['description'],
-                    'llms_txt_url' => $_POST['llms_txt_url'],
-                    'has_full' => isset($_POST['has_full']) ? 1 : 0,
-                    'is_featured' => isset($_POST['is_featured']) ? 1 : 0,
-                    'is_draft' => isset($_POST['is_draft']) ? 1 : 0,
-                    'is_requested' => isset($_POST['is_requested']) ? 1 : 0,
-                    'votes' => $_POST['votes'] ?? 0
+                    "name" => $_POST["name"],
+                    "description" => $_POST["description"],
+                    "llms_txt_url" => $_POST["llms_txt_url"],
+                    "has_full" => isset($_POST["has_full"]) ? 1 : 0,
+                    "is_featured" => isset($_POST["is_featured"]) ? 1 : 0,
+                    "is_draft" => isset($_POST["is_draft"]) ? 1 : 0,
+                    "is_requested" => isset($_POST["is_requested"]) ? 1 : 0,
+                    "votes" => $_POST["votes"] ?? 0,
                 ];
-                
+
                 // Handle logo upload
-                if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-                    $file = $_FILES['logo'];
-                    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                    
-                    // Validate file type
-                    if (in_array($ext, ['png', 'jpg', 'jpeg', 'gif'])) {
-                        $result = $imageOptimizer->processUploadedImage($file, $_POST['name']);
-                        if ($result['success']) {
-                            $data['logo_url'] = '/logos/' . $result['filename'];
-                        }
-                    } elseif ($ext === 'svg') {
-                        // Handle SVG files separately (no optimization needed)
-                        $filename = get_logo_filename($_POST['name']) . '.svg';
-                        $target_path = __DIR__ . '/../logos/' . $filename;
-                        
-                        // Create logos directory if it doesn't exist
-                        if (!is_dir(__DIR__ . '/../logos')) {
-                            mkdir(__DIR__ . '/../logos', 0775, true);
-                        }
-                        
-                        if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                            chmod($target_path, 0664);
-                            $data['logo_url'] = '/logos/' . $filename;
-                        }
+                if (
+                    isset($_FILES["logo"]) &&
+                    $_FILES["logo"]["error"] === UPLOAD_ERR_OK
+                ) {
+                    $result = $imageOptimizer->processUploadedImage(
+                        $_FILES["logo"],
+                        $_POST["name"]
+                    );
+
+                    if ($result["success"]) {
+                        $data["logo_url"] = "/logos/" . $result["filename"];
+                    } else {
+                        $message =
+                            "Failed to process logo: " .
+                            ($result["error"] ?? "Unknown error");
+                        $messageType = "error";
+                        break;
                     }
                 }
-                
+
                 if ($db->updateImplementation($id, $data)) {
                     $message = "Implementation updated successfully!";
-                    $messageType = 'success';
+                    $messageType = "success";
                 } else {
-                    $message = "Failed to update implementation. Please try again.";
-                    $messageType = 'error';
+                    $message =
+                        "Failed to update implementation. Please try again.";
+                    $messageType = "error";
                 }
                 break;
-                
-            case 'delete':
-                if ($db->deleteImplementation($_POST['id'])) {
+
+            case "delete":
+                if ($db->deleteImplementation($_POST["id"])) {
                     $message = "Implementation deleted successfully!";
-                    $messageType = 'success';
+                    $messageType = "success";
                 } else {
-                    $message = "Failed to delete implementation. Please try again.";
-                    $messageType = 'error';
+                    $message =
+                        "Failed to delete implementation. Please try again.";
+                    $messageType = "error";
                 }
                 break;
+
+            case "upload_logo":
+                error_log("Upload logo action triggered");
+
+                if (!isset($_FILES["logo"])) {
+                    error_log("No logo file found in request");
+                    echo json_encode(["error" => "No file uploaded"]);
+                    exit();
+                }
+
+                error_log("Logo file details: " . json_encode($_FILES["logo"]));
+
+                $uploadDir = __DIR__ . "/../../public/logos/";
+                error_log("Upload directory: " . $uploadDir);
+                error_log(
+                    "Upload directory exists: " .
+                        (is_dir($uploadDir) ? "yes" : "no")
+                );
+                error_log(
+                    "Upload directory writable: " .
+                        (is_writable($uploadDir) ? "yes" : "no")
+                );
+
+                $optimizer = new ImageOptimizer($uploadDir);
+                $result = $optimizer->processUploadedImage(
+                    $_FILES["logo"],
+                    $_POST["name"]
+                );
+
+                error_log("Upload result: " . json_encode($result));
+                echo json_encode($result);
+                exit();
         }
     }
 }
 
-$implementations = $db->getImplementations(true); // Pass true to show all implementations including drafts
+$implementations = $db->getImplementations(true);
+
+// Pass true to show all implementations including drafts
 ?>
 <!DOCTYPE html>
 <html>
@@ -255,19 +279,29 @@ $implementations = $db->getImplementations(true); // Pass true to show all imple
             gap: 8px;
         }
         .btn {
-            padding: 4px 8px;
+            padding: 6px 12px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-family: inherit;
+            font-size: 14px;
+            margin: 0 4px;
         }
         .btn-edit {
-            background: #ffd700;
-            color: #333;
+            background: #333;
+            color: white;
         }
         .btn-delete {
             background: #dc3545;
             color: white;
+        }
+        .btn-delete:hover {
+            background: #bb2d3b;
+        }
+        .actions form {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
         }
         .modal {
             display: none;
@@ -412,7 +446,7 @@ $implementations = $db->getImplementations(true); // Pass true to show all imple
                 <a href="/admin/logout.php" class="logout-btn">Logout</a>
             </div>
         </div>
-        
+
         <?php if ($message): ?>
         <div class="message <?php echo $messageType; ?>">
             <?php echo htmlspecialchars($message); ?>
@@ -424,7 +458,7 @@ $implementations = $db->getImplementations(true); // Pass true to show all imple
                 <h2>Manage Implementations</h2>
                 <button class="add-new" onclick="showAddModal()">Add New</button>
             </div>
-            
+
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -444,20 +478,42 @@ $implementations = $db->getImplementations(true); // Pass true to show all imple
                     <tbody>
                         <?php foreach ($implementations as $impl): ?>
                         <tr>
-                            <td class="name"><?= htmlspecialchars($impl['name']) ?></td>
-                            <td class="logo"><?= htmlspecialchars($impl['logo_url'] ?? '') ?></td>
-                            <td class="description"><?= htmlspecialchars($impl['description'] ?? '') ?></td>
-                            <td class="url"><?= htmlspecialchars($impl['llms_txt_url'] ?? '') ?></td>
-                            <td class="status"><?= $impl['has_full'] ? 'Yes' : 'No' ?></td>
-                            <td class="status"><?= $impl['is_featured'] ? 'Yes' : 'No' ?></td>
-                            <td class="status"><?= $impl['is_draft'] ? 'Yes' : 'No' ?></td>
-                            <td class="status"><?= $impl['is_requested'] ? 'Requested' : 'Regular' ?></td>
-                            <td class="votes"><?= htmlspecialchars((string)($impl['votes'] ?? 0)) ?></td>
+                            <td class="name"><?= htmlspecialchars(
+                                $impl["name"]
+                            ) ?></td>
+                            <td class="logo"><?= htmlspecialchars(
+                                $impl["logo_url"] ?? ""
+                            ) ?></td>
+                            <td class="description"><?= htmlspecialchars(
+                                $impl["description"] ?? ""
+                            ) ?></td>
+                            <td class="url"><?= htmlspecialchars(
+                                $impl["llms_txt_url"] ?? ""
+                            ) ?></td>
+                            <td class="status"><?= $impl["has_full"]
+                                ? "Yes"
+                                : "No" ?></td>
+                            <td class="status"><?= $impl["is_featured"]
+                                ? "Yes"
+                                : "No" ?></td>
+                            <td class="status"><?= $impl["is_draft"]
+                                ? "Yes"
+                                : "No" ?></td>
+                            <td class="status"><?= $impl["is_requested"]
+                                ? "Requested"
+                                : "Regular" ?></td>
+                            <td class="votes"><?= htmlspecialchars(
+                                (string) ($impl["votes"] ?? 0)
+                            ) ?></td>
                             <td class="actions">
-                                <button class="btn btn-edit" onclick="showEditModal(<?= htmlspecialchars(json_encode($impl)) ?>)">Edit</button>
+                                <button class="btn btn-edit" onclick="showEditModal(<?= htmlspecialchars(
+                                    json_encode($impl)
+                                ) ?>)">Edit</button>
                                 <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this implementation?')">
                                     <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="id" value="<?= htmlspecialchars($impl['id']) ?>">
+                                    <input type="hidden" name="id" value="<?= htmlspecialchars(
+                                        $impl["id"]
+                                    ) ?>">
                                     <button type="submit" class="btn btn-delete">Delete</button>
                                 </form>
                             </td>
@@ -563,24 +619,24 @@ $implementations = $db->getImplementations(true); // Pass true to show all imple
             document.getElementById('is_featured').checked = impl.is_featured === 1;
             document.getElementById('is_draft').checked = impl.is_draft === 1;
             document.getElementById('is_requested').checked = impl.is_requested === 1;
-            
-            const preview = document.querySelector('.logo-preview');
+
+const preview = document.querySelector('.logo-preview');
             if (impl.logo_url) {
                 preview.style.display = 'block';
                 preview.querySelector('img').src = impl.logo_url;
             } else {
                 preview.style.display = 'none';
             }
-            
-            document.getElementById('modal').style.display = 'flex';
+
+document.getElementById('modal').style.display = 'flex';
         }
 
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
         }
-        
-        // Keep modal open if there was an error
-        <?php if ($messageType === 'error' && isset($_POST['action'])): ?>
+
+// Keep modal open if there was an error
+        <?php if ($messageType === "error" && isset($_POST["action"])): ?>
         document.getElementById('modal').style.display = 'block';
         <?php endif; ?>
     </script>

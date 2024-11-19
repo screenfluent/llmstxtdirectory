@@ -107,8 +107,8 @@ class Database {
                     logo_url TEXT,
                     has_full INTEGER DEFAULT 0,
                     is_featured INTEGER DEFAULT 0,
-                    is_draft INTEGER DEFAULT 0,
                     is_requested INTEGER DEFAULT 0,
+                    is_draft INTEGER DEFAULT 0,
                     votes INTEGER DEFAULT 0,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -231,24 +231,21 @@ class Database {
 
     public function deleteImplementation($id) {
         try {
-            // Begin transaction
-            $this->db->exec('BEGIN');
-            
-            // Delete votes first
-            $query = 'DELETE FROM votes WHERE implementation_id = :id';
-            $params = [':id' => $id];
-            $this->executeQuery($query, $params);
-            
-            // Then delete the implementation
+            // Delete the implementation (votes will be deleted automatically due to ON DELETE CASCADE)
             $query = 'DELETE FROM implementations WHERE id = :id';
             $params = [':id' => $id];
-            $this->executeQuery($query, $params);
+            $result = $this->executeQuery($query, $params);
             
-            // Commit transaction
-            $this->db->exec('COMMIT');
+            // Check if any rows were affected
+            if ($this->db->changes() === 0) {
+                logError('No implementation found to delete', [
+                    'id' => $id
+                ]);
+                return false;
+            }
+            
             return true;
         } catch (Exception $e) {
-            $this->db->exec('ROLLBACK');
             logError('Failed to delete implementation', [
                 'id' => $id,
                 'error' => $e->getMessage()

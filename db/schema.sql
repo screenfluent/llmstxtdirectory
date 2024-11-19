@@ -18,5 +18,5 @@ CREATE TABLE IF NOT EXISTS votes (
     implementation_id INTEGER,
     user_ip TEXT,
     voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(implementation_id) REFERENCES implementations(id)
+    FOREIGN KEY(implementation_id) REFERENCES implementations(id) ON DELETE CASCADE
 );
