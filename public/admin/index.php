@@ -53,21 +53,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Handle SVG files separately (no optimization needed)
                         $filename = get_logo_filename($_POST['name']) . '.svg';
                         $target_path = __DIR__ . '/../logos/' . $filename;
+                        $logos_dir = __DIR__ . '/../logos';
                         
                         // Create logos directory if it doesn't exist
-                        if (!is_dir(__DIR__ . '/../logos')) {
-                            mkdir(__DIR__ . '/../logos', 0775, true);
+                        if (!is_dir($logos_dir)) {
+                            if (!mkdir($logos_dir, 0775, true)) {
+                                logError('Failed to create logos directory', [
+                                    'path' => $logos_dir
+                                ]);
+                                $message = "Failed to create logos directory. Please check permissions.";
+                                $messageType = 'error';
+                                break;
+                            }
+                            chmod($logos_dir, 0775);
+                        } elseif (!is_writable($logos_dir)) {
+                            chmod($logos_dir, 0775);
+                            if (!is_writable($logos_dir)) {
+                                logError('Logos directory is not writable', [
+                                    'path' => $logos_dir,
+                                    'perms' => decoct(fileperms($logos_dir) & 0777)
+                                ]);
+                                $message = "Logos directory is not writable. Please check permissions.";
+                                $messageType = 'error';
+                                break;
+                            }
                         }
                         
                         // Delete old file if it exists
                         if (file_exists($target_path)) {
-                            unlink($target_path);
+                            if (!is_writable($target_path)) {
+                                chmod($target_path, 0664);
+                            }
+                            if (!unlink($target_path)) {
+                                logError('Failed to delete existing SVG file', [
+                                    'path' => $target_path,
+                                    'perms' => decoct(fileperms($target_path) & 0777)
+                                ]);
+                                $message = "Failed to delete existing logo file. Please check permissions.";
+                                $messageType = 'error';
+                                break;
+                            }
                         }
                         
-                        if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                            chmod($target_path, 0664);
-                            $data['logo_url'] = '/logos/' . $filename;
+                        if (!move_uploaded_file($file['tmp_name'], $target_path)) {
+                            logError('Failed to move uploaded SVG file', [
+                                'source' => $file['tmp_name'],
+                                'target' => $target_path,
+                                'upload_error' => $file['error']
+                            ]);
+                            $message = "Failed to save logo file. Please try again.";
+                            $messageType = 'error';
+                            break;
                         }
+                        
+                        if (!chmod($target_path, 0664)) {
+                            logError('Failed to set SVG file permissions', [
+                                'path' => $target_path
+                            ]);
+                            $message = "Failed to set file permissions. Please check server configuration.";
+                            $messageType = 'error';
+                            break;
+                        }
+                        
+                        $data['logo_url'] = '/logos/' . $filename;
                     }
                 }
                 
@@ -108,21 +156,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Handle SVG files separately (no optimization needed)
                         $filename = get_logo_filename($_POST['name']) . '.svg';
                         $target_path = __DIR__ . '/../logos/' . $filename;
+                        $logos_dir = __DIR__ . '/../logos';
                         
                         // Create logos directory if it doesn't exist
-                        if (!is_dir(__DIR__ . '/../logos')) {
-                            mkdir(__DIR__ . '/../logos', 0775, true);
+                        if (!is_dir($logos_dir)) {
+                            if (!mkdir($logos_dir, 0775, true)) {
+                                logError('Failed to create logos directory', [
+                                    'path' => $logos_dir
+                                ]);
+                                $message = "Failed to create logos directory. Please check permissions.";
+                                $messageType = 'error';
+                                break;
+                            }
+                            chmod($logos_dir, 0775);
+                        } elseif (!is_writable($logos_dir)) {
+                            chmod($logos_dir, 0775);
+                            if (!is_writable($logos_dir)) {
+                                logError('Logos directory is not writable', [
+                                    'path' => $logos_dir,
+                                    'perms' => decoct(fileperms($logos_dir) & 0777)
+                                ]);
+                                $message = "Logos directory is not writable. Please check permissions.";
+                                $messageType = 'error';
+                                break;
+                            }
                         }
                         
                         // Delete old file if it exists
                         if (file_exists($target_path)) {
-                            unlink($target_path);
+                            if (!is_writable($target_path)) {
+                                chmod($target_path, 0664);
+                            }
+                            if (!unlink($target_path)) {
+                                logError('Failed to delete existing SVG file', [
+                                    'path' => $target_path,
+                                    'perms' => decoct(fileperms($target_path) & 0777)
+                                ]);
+                                $message = "Failed to delete existing logo file. Please check permissions.";
+                                $messageType = 'error';
+                                break;
+                            }
                         }
                         
-                        if (move_uploaded_file($file['tmp_name'], $target_path)) {
-                            chmod($target_path, 0664);
-                            $data['logo_url'] = '/logos/' . $filename;
+                        if (!move_uploaded_file($file['tmp_name'], $target_path)) {
+                            logError('Failed to move uploaded SVG file', [
+                                'source' => $file['tmp_name'],
+                                'target' => $target_path,
+                                'upload_error' => $file['error']
+                            ]);
+                            $message = "Failed to save logo file. Please try again.";
+                            $messageType = 'error';
+                            break;
                         }
+                        
+                        if (!chmod($target_path, 0664)) {
+                            logError('Failed to set SVG file permissions', [
+                                'path' => $target_path
+                            ]);
+                            $message = "Failed to set file permissions. Please check server configuration.";
+                            $messageType = 'error';
+                            break;
+                        }
+                        
+                        $data['logo_url'] = '/logos/' . $filename;
                     }
                 }
                 

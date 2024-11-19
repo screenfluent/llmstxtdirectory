@@ -36,6 +36,19 @@ class ImageOptimizer {
                 throw new RuntimeException('Invalid file type. Allowed types: JPEG, PNG, GIF');
             }
             
+            // Ensure upload directory exists and is writable
+            if (!is_dir($this->uploadDir)) {
+                if (!mkdir($this->uploadDir, 0775, true)) {
+                    throw new RuntimeException('Failed to create upload directory');
+                }
+                chmod($this->uploadDir, 0775);
+            } elseif (!is_writable($this->uploadDir)) {
+                chmod($this->uploadDir, 0775);
+                if (!is_writable($this->uploadDir)) {
+                    throw new RuntimeException('Upload directory is not writable');
+                }
+            }
+            
             // Create image from uploaded file
             $sourceImage = match($mimeType) {
                 'image/jpeg' => imagecreatefromjpeg($uploadedFile['tmp_name']),
@@ -89,7 +102,12 @@ class ImageOptimizer {
             
             // Delete old file if it exists
             if (file_exists($filename)) {
-                unlink($filename);
+                if (!is_writable($filename)) {
+                    chmod($filename, 0664);
+                }
+                if (!unlink($filename)) {
+                    throw new RuntimeException('Failed to delete existing file: ' . $filename);
+                }
             }
             
             // Save as WebP
@@ -98,7 +116,9 @@ class ImageOptimizer {
             }
             
             // Set proper permissions
-            chmod($filename, 0664);
+            if (!chmod($filename, 0664)) {
+                throw new RuntimeException('Failed to set file permissions');
+            }
             
             // Cleanup
             imagedestroy($sourceImage);
@@ -110,6 +130,16 @@ class ImageOptimizer {
             ];
             
         } catch (RuntimeException $e) {
+            logError('Image processing error', [
+                'error' => $e->getMessage(),
+                'file' => $uploadedFile['name'] ?? 'unknown',
+                'upload_dir' => $this->uploadDir,
+                'permissions' => [
+                    'dir_exists' => is_dir($this->uploadDir),
+                    'dir_writable' => is_writable($this->uploadDir),
+                    'dir_perms' => decoct(fileperms($this->uploadDir) & 0777)
+                ]
+            ]);
             return [
                 'success' => false,
                 'error' => $e->getMessage()
