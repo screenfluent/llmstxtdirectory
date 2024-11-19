@@ -107,8 +107,10 @@ class Database {
                     logo_url TEXT,
                     has_full INTEGER DEFAULT 0,
                     is_featured INTEGER DEFAULT 0,
-                    is_draft INTEGER DEFAULT 0,
                     is_requested INTEGER DEFAULT 0,
+                    is_draft INTEGER DEFAULT 0,
+                    is_maintainer INTEGER DEFAULT 0,
+                    contact_email TEXT,
                     votes INTEGER DEFAULT 0,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -455,13 +457,13 @@ class Database {
             // Only include fields that are actually provided
             $allowedFields = [
                 'name', 'logo_url', 'description', 'llms_txt_url',
-                'has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'
+                'has_full', 'is_featured', 'is_requested', 'is_draft', 'is_maintainer', 'contact_email', 'votes'
             ];
             
             foreach ($data as $key => $value) {
                 if (in_array($key, $allowedFields)) {
                     $fields[] = "$key = :$key";
-                    if (in_array($key, ['has_full', 'is_featured', 'is_requested', 'is_draft', 'votes'])) {
+                    if (in_array($key, ['has_full', 'is_featured', 'is_requested', 'is_draft', 'is_maintainer', 'votes'])) {
                         $values[":$key"] = (int)$value;
                     } else {
                         $values[":$key"] = $value;
