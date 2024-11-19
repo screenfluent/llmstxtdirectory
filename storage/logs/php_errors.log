@@ -1,0 +1,64 @@
+[19-Nov-2024 20:26:48 UTC] Submission request: Method=POST, Data={"csrf_token":"f8f24c765128d85560460a2314a911604767fadd0cd7c17de31e231e74ecefe1","llms_txt_url":"https:\/\/ssssdotenvx.com\/llms.txt","email":"","is_maintainer":"on","website":""}
+[19-Nov-2024 20:26:48 UTC] Rate limit check: IP=127.0.0.1, File=/Users/szymon/Herd/llmstxtdirectory/public/api/../../storage/ratelimit.json, Exists=false
+[19-Nov-2024 20:26:48 UTC] Rate limit data saved: Success=true, IP=127.0.0.1, Count=1
+[19-Nov-2024 20:26:48 UTC] Submission error: Could not fetch llms.txt file (HTTP 0)
+Trace: #0 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require()
+#1 {main}
+[19-Nov-2024 20:49:40 UTC] Submission request: Method=POST, Data={"csrf_token":"2a69c8e870ccc4ea300c7a4c2e01888018b4512cf741a87223702e5c2bd403b4","llms_txt_url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":"on","website":""}
+[19-Nov-2024 20:49:40 UTC] Rate limit check: IP=127.0.0.1, File=/Users/szymon/Herd/llmstxtdirectory/public/api/../../storage/ratelimit.json, Exists=true
+[19-Nov-2024 20:49:40 UTC] Existing rate limit data: IP=127.0.0.1, Count=1, Timestamp=2024-11-19 20:26:48
+[19-Nov-2024 20:49:40 UTC] Rate limit data saved: Success=true, IP=127.0.0.1, Count=2
+[19-Nov-2024 20:49:40 UTC] Attempting to fetch URL: https://dotenvx.com/llms.txt
+[19-Nov-2024 20:49:40 UTC] cURL result: URL=https://dotenvx.com/llms.txt, HTTP_CODE=200, CURL_ERROR=0, ERROR_MSG=
+[19-Nov-2024 20:49:40 UTC] Content-Type of response: text/plain; charset=utf-8
+[19-Nov-2024 20:49:40 UTC] Attempting database submission: {"url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":true,"ip_address":"127.0.0.1","submitted_at":"2024-11-19 20:49:40"}
+[19-Nov-2024 20:49:40 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function logInfo() in /Users/szymon/Herd/llmstxtdirectory/db/database.php:456
+Stack trace:
+#0 /Users/szymon/Herd/llmstxtdirectory/public/api/submit.php(188): Database->addSubmission(Array)
+#1 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require('/Users/szymon/H...')
+#2 {main}
+  thrown in /Users/szymon/Herd/llmstxtdirectory/db/database.php on line 456
+[19-Nov-2024 20:52:48 UTC] Submission request: Method=POST, Data={"csrf_token":"766b80e3e7179e9bc156fc162ad53d791e072b9eacdff465114affdbc873e24c","llms_txt_url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":"on","website":""}
+[19-Nov-2024 20:52:48 UTC] Rate limit check: IP=127.0.0.1, File=/Users/szymon/Herd/llmstxtdirectory/public/api/../../storage/ratelimit.json, Exists=true
+[19-Nov-2024 20:52:48 UTC] Existing rate limit data: IP=127.0.0.1, Count=2, Timestamp=2024-11-19 20:26:48
+[19-Nov-2024 20:52:48 UTC] Rate limit data saved: Success=true, IP=127.0.0.1, Count=3
+[19-Nov-2024 20:52:48 UTC] Attempting database submission: {"url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":true,"ip_address":"127.0.0.1","submitted_at":"2024-11-19 20:52:48"}
+[19-Nov-2024 20:52:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function logInfo() in /Users/szymon/Herd/llmstxtdirectory/db/database.php:456
+Stack trace:
+#0 /Users/szymon/Herd/llmstxtdirectory/public/api/submit.php(135): Database->addSubmission(Array)
+#1 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require('/Users/szymon/H...')
+#2 {main}
+  thrown in /Users/szymon/Herd/llmstxtdirectory/db/database.php on line 456
+[19-Nov-2024 20:55:07 UTC] Submission request: Method=POST, Data={"csrf_token":"d4c8d1ba899a1e71e970c0ae67a048d3acec38ed839100ed62ad95b80c9b02d7","llms_txt_url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":"on","website":""}
+[19-Nov-2024 20:55:07 UTC] Rate limit check: IP=127.0.0.1, File=/Users/szymon/Herd/llmstxtdirectory/public/api/../../storage/ratelimit.json, Exists=true
+[19-Nov-2024 20:55:07 UTC] Existing rate limit data: IP=127.0.0.1, Count=3, Timestamp=2024-11-19 20:26:48
+[19-Nov-2024 20:55:07 UTC] Rate limit data saved: Success=true, IP=127.0.0.1, Count=4
+[19-Nov-2024 20:55:07 UTC] Attempting database submission: {"url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":true,"ip_address":"127.0.0.1","submitted_at":"2024-11-19 20:55:07"}
+[19-Nov-2024 20:55:07 UTC] Database error in addSubmission: Unable to prepare statement: no such table: submissions
+[19-Nov-2024 20:55:07 UTC] Submission error: Unable to prepare statement: no such table: submissions
+Trace: #0 /Users/szymon/Herd/llmstxtdirectory/db/database.php(29): SQLite3->prepare('\n              ...')
+#1 /Users/szymon/Herd/llmstxtdirectory/db/database.php(474): Database->executeQuery('\n              ...', Array)
+#2 /Users/szymon/Herd/llmstxtdirectory/public/api/submit.php(123): Database->addSubmission(Array)
+#3 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require('/Users/szymon/H...')
+#4 {main}
+[19-Nov-2024 20:57:04 UTC] Submission request: Method=POST, Data={"csrf_token":"a4fd8e873ba755e836043bd777c3fce97114cae162b25396e1f149427d95dc62","llms_txt_url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":"on","website":""}
+[19-Nov-2024 20:57:04 UTC] Rate limit check: IP=127.0.0.1, File=/Users/szymon/Herd/llmstxtdirectory/public/api/../../storage/ratelimit.json, Exists=true
+[19-Nov-2024 20:57:04 UTC] Existing rate limit data: IP=127.0.0.1, Count=4, Timestamp=2024-11-19 20:26:48
+[19-Nov-2024 20:57:04 UTC] Rate limit data saved: Success=true, IP=127.0.0.1, Count=5
+[19-Nov-2024 20:57:04 UTC] Attempting database submission: {"url":"https:\/\/dotenvx.com\/llms.txt","email":"","is_maintainer":true,"ip_address":"127.0.0.1","submitted_at":"2024-11-19 20:57:04"}
+[19-Nov-2024 21:04:00 UTC] Submission request: Method=POST, Data={"csrf_token":"f7181e6d7369c691724de34c629a0ceea21083e1fb5cc5d796e870b6ab3c6ce2","llms_txt_url":"https:\/\/dotenvx.com\/llms.txt","email":"yolo@gmail.com","is_maintainer":"on","website":""}
+[19-Nov-2024 21:04:00 UTC] Submission error: Too many submissions. Please try again later.
+Trace: #0 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require()
+#1 {main}
+[19-Nov-2024 21:04:29 UTC] Submission request: Method=POST, Data={"csrf_token":"94a222f9064b2a28f3302377ff309dbfd15666b57e3656ee1420aeccebb6f314","llms_txt_url":"https:\/\/dotenvx.com\/llms.txt","email":"yolo@bolo.com","is_maintainer":"on","website":""}
+[19-Nov-2024 21:04:29 UTC] Submission error: Too many submissions. Please try again later.
+Trace: #0 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require()
+#1 {main}
+[19-Nov-2024 21:04:32 UTC] Submission request: Method=POST, Data={"csrf_token":"94a222f9064b2a28f3302377ff309dbfd15666b57e3656ee1420aeccebb6f314","llms_txt_url":"https:\/\/dotdddenvx.com\/llms.txt","email":"yolo@bolo.com","is_maintainer":"on","website":""}
+[19-Nov-2024 21:04:32 UTC] Submission error: Too many submissions. Please try again later.
+Trace: #0 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require()
+#1 {main}
+[19-Nov-2024 21:06:49 UTC] Submission request: Method=POST, Data={"csrf_token":"73638aaebff087518ea5a0849f571185359edf3b505cb3e67e9619c98f0a274e","llms_txt_url":"https:\/\/dotenvx.com\/llms.txt","email":"","website":""}
+[19-Nov-2024 21:06:49 UTC] Submission error: Too many submissions. Please try again later.
+Trace: #0 /Applications/Herd.app/Contents/Resources/valet/server.php(167): require()
+#1 {main}

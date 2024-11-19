@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# =================================================================
+# Laravel Forge Deployment Script Template - Production Environment
+# =================================================================
+#
+# IMPORTANT: This file serves as a template and should be manually
+# copied into the Laravel Forge deployment script section.
+# It is not executed directly from the repository.
+#
+# Deployment is handled automatically by Forge's Quick Deploy when
+# changes are pushed to the production branch.
+# =================================================================
+
 # Enable error reporting
 set -e
 

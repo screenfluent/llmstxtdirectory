@@ -97,51 +97,30 @@ class Database {
 
     public function initializeDatabase() {
         try {
-            // Create implementations table
-            $this->executeRawSQL('
-                CREATE TABLE IF NOT EXISTS implementations (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    description TEXT,
-                    llms_txt_url TEXT UNIQUE NOT NULL,
-                    logo_url TEXT,
-                    has_full INTEGER DEFAULT 0,
-                    is_featured INTEGER DEFAULT 0,
-                    is_requested INTEGER DEFAULT 0,
-                    is_draft INTEGER DEFAULT 0,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )
-            ');
+            $schema = file_get_contents(__DIR__ . '/schema.sql');
+            if ($schema === false) {
+                throw new Exception('Could not read schema file');
+            }
 
-            // Add sample data if table is empty
-            $result = $this->executeQuery('SELECT COUNT(*) as count FROM implementations');
-            $count = $result->fetchArray(SQLITE3_ASSOC)['count'];
+            error_log("Initializing database with schema");
+            
+            // Split schema into individual statements
+            $statements = array_filter(
+                array_map('trim', explode(';', $schema)),
+                function($sql) { return !empty($sql); }
+            );
 
-            if ($count === 0) {
-                $sampleData = [
-                    [
-                        'name' => 'Example Implementation',
-                        'description' => 'This is a sample implementation of llms.txt',
-                        'llms_txt_url' => 'https://example.com/llms.txt',
-                        'logo_url' => '/logos/example.png',
-                        'has_full' => 1,
-                        'is_featured' => 1,
-                        'votes' => 10
-                    ],
-                    // Add more sample entries as needed
-                ];
-
-                foreach ($sampleData as $data) {
-                    $this->addImplementation($data);
+            // Execute each statement
+            foreach ($statements as $sql) {
+                $result = $this->db->exec($sql);
+                if ($result === false) {
+                    throw new Exception($this->db->lastErrorMsg());
                 }
             }
 
             return true;
         } catch (Exception $e) {
-            logError('Database initialization error', [
-                'error' => $e->getMessage()
-            ]);
+            error_log("Failed to initialize database: " . $e->getMessage());
             throw $e;
         }
     }
@@ -435,6 +414,67 @@ class Database {
                 'error' => $e->getMessage()
             ]);
             throw $e;
+        }
+    }
+
+    public function addSubmission($data) {
+        try {
+            $query = '
+                INSERT INTO submissions (url, email, is_maintainer, ip_address, submitted_at)
+                VALUES (:url, :email, :is_maintainer, :ip_address, :submitted_at)
+            ';
+
+            error_log("Adding submission: " . json_encode($data));
+
+            $result = $this->executeQuery($query, [
+                ':url' => $data['url'],
+                ':email' => $data['email'],
+                ':is_maintainer' => $data['is_maintainer'] ? 1 : 0,
+                ':ip_address' => $data['ip_address'],
+                ':submitted_at' => $data['submitted_at']
+            ]);
+
+            if ($result === false) {
+                throw new Exception($this->db->lastErrorMsg());
+            }
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Database error in addSubmission: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function getSubmissions() {
+        try {
+            $query = 'SELECT * FROM submissions ORDER BY submitted_at DESC';
+            return $this->fetchAll($query);
+        } catch (Exception $e) {
+            error_log("Failed to get submissions: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getSubmissionById($id) {
+        try {
+            $query = 'SELECT * FROM submissions WHERE id = :id';
+            return $this->fetchOne($query, [':id' => $id]);
+        } catch (Exception $e) {
+            error_log("Failed to get submission: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function updateSubmissionStatus($id, $status) {
+        try {
+            $query = 'UPDATE submissions SET status = :status WHERE id = :id';
+            return $this->executeQuery($query, [
+                ':id' => $id,
+                ':status' => $status
+            ]);
+        } catch (Exception $e) {
+            error_log("Failed to update submission status: " . $e->getMessage());
+            return false;
         }
     }
 }

@@ -11,3 +11,13 @@ CREATE TABLE IF NOT EXISTS implementations (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    url TEXT NOT NULL,
+    email TEXT,
+    is_maintainer INTEGER DEFAULT 0,
+    ip_address TEXT,
+    status TEXT DEFAULT 'pending',
+    submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
